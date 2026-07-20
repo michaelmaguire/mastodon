@@ -25,6 +25,10 @@ class REST::AccountSerializer < ActiveModel::Serializer
   attribute :email_subscriptions, if: -> { Rails.application.config.x.email_subscriptions && Setting.email_subscriptions }
 
   attribute :invalid_handle, if: :invalid_handle?
+  # TruAnon badge cache: rank + score only (color derives from rank). Rides every
+  # account so the badge and per-post checkmark render from it, no per-view call.
+  # Never a link, never an anchor — those are fetched live into the profile boxes.
+  attribute :truanon, if: :truanon_verified?
 
   class AccountDecorator < SimpleDelegator
     def self.model_name
@@ -68,6 +72,14 @@ class REST::AccountSerializer < ActiveModel::Serializer
 
   def note
     object.unavailable? ? '' : account_bio_format(object)
+  end
+
+  def truanon
+    { rank: object.truanon_rank, score: object.truanon_score }
+  end
+
+  def truanon_verified?
+    object.truanon_verified?
   end
 
   def url

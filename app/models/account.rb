@@ -54,6 +54,10 @@
 #  suspended_at                  :datetime
 #  suspension_origin             :integer
 #  trendable                     :boolean
+#  truanon_checked_at            :datetime
+#  truanon_rank                  :string
+#  truanon_score                 :string
+#  truanon_verified              :boolean          default(FALSE), not null
 #  uri                           :string
 #  url                           :string
 #  username                      :string           default(""), not null

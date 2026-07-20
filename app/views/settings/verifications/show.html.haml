@@ -33,6 +33,52 @@
             = material_symbol 'check', { class: 'verified-badge__mark' }
             %span= field.value
 
+.simple_form.form-section
+  %h2.heading-medium Automatic verification
+
+  %p.lead
+    It can be difficult to use <code>rel="me"</code>, and certain links and profiles such as blogs and social sites do not allow it. This verification extends the same protocol as a portable, privacy-forward confirmation of identity that stays current on its own, assures privacy separation, and travels with the owner across the fediverse.
+
+  - if @truanon[:configured] == false
+    %p.lead A server administrator must add the TruAnon service name and key before this can be used.
+  - else
+    - if @truanon[:error]
+      - if @truanon[:error_code] == 'service_inactive'
+        %p.lead This server’s TruAnon service is currently disabled. A server administrator needs to enable it before verification will work.
+      - else
+        %p.lead TruAnon is unreachable right now — your current status is unchanged. Try again shortly.
+    - elsif @truanon[:anchored]
+      %p.lead
+        %span.verified-badge
+          = material_symbol 'check', { class: 'verified-badge__mark' }
+          %span Your identity is securely anchored — #{@truanon[:rank]} (#{@truanon[:score]} of 5)
+      - if @truanon_public_profile_url.present?
+        - ta_href = @truanon_public_profile_url.match?(%r{\Ahttps?://}i) ? @truanon_public_profile_url : "https://#{@truanon_public_profile_url}"
+        %p.lead
+          Your public identity:
+          = link_to @truanon_public_profile_url.sub(%r{\Ahttps?://}i, ''), ta_href, target: '_blank', rel: 'noopener'
+    - elsif @truanon_verify_url.present?
+      %p.lead Anchor your identity once and your badge follows you everywhere on this server.
+      %p= link_to 'Verify', @truanon_verify_url, class: 'button', target: '_blank', rel: 'noopener'
+
+    = simple_form_for current_user, url: settings_verification_path, html: { method: :put, id: :edit_truanon } do |tf|
+      = tf.simple_fields_for :settings, current_user.settings do |ff|
+        .fields-group
+          = ff.input :wants_verified_identity, wrapper: :with_label, label: 'Use verified identity', hint: 'Off shows you as Unknown everywhere. Your anchor remains yours.'
+
+        %h3.heading-small Privacy
+
+        .fields-group
+          = ff.input :show_personal, wrapper: :with_label, label: 'Display personal info'
+          = ff.input :show_contact, wrapper: :with_label, label: 'Display contact details'
+          = ff.input :show_social, wrapper: :with_label, label: 'Display social profiles'
+
+        .fields-group
+          = ff.input :make_private, wrapper: :with_label, label: 'Private mode (no links)', hint: 'Your rank shows, but nothing links out.'
+
+      .actions
+        = tf.button :button, t('generic.save_changes'), type: :submit
+
 = simple_form_for @account, url: settings_verification_path, html: { class: 'form-section' } do |f|
   = render 'shared/error_messages', object: @account
 

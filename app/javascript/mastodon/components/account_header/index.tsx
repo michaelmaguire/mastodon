@@ -30,6 +30,7 @@ import { AccountNumberFields } from './number_fields';
 import classes from './styles.module.scss';
 import { AccountSubscriptionForm } from './subscription_form';
 import { AccountTabs } from './tabs';
+import { TruanonFields } from './truanon_fields';
 
 const titleFromAccount = (account: Account) => {
   const displayName = account.display_name;
@@ -150,7 +151,11 @@ export const AccountHeader: React.FC<{
 
               <AccountBio showDropdown accountId={accountId} />
 
-              <AccountHeaderFields accountId={accountId} />
+              {account.truanon ? (
+                <TruanonFields accountId={accountId} />
+              ) : (
+                <AccountHeaderFields accountId={accountId} />
+              )}
 
               {!me && account.email_subscriptions && (
                 <AccountSubscriptionForm accountId={accountId} />

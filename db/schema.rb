@@ -219,6 +219,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_16_161747) do
     t.datetime "suspended_at", precision: nil
     t.integer "suspension_origin"
     t.boolean "trendable"
+    t.datetime "truanon_checked_at"
+    t.string "truanon_rank"
+    t.string "truanon_score"
+    t.boolean "truanon_verified", default: false, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.string "uri"
     t.string "url"
@@ -1731,9 +1735,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_16_161747) do
   add_index "instances", ["domain"], name: "index_instances_on_domain", unique: true
 
   create_view "user_ips", sql_definition: <<-SQL
-      SELECT user_id,
-      ip,
-      max(used_at) AS used_at
+      SELECT t0.user_id,
+      t0.ip,
+      max(t0.used_at) AS used_at
      FROM ( SELECT users.id AS user_id,
               users.sign_up_ip AS ip,
               users.created_at AS used_at
@@ -1750,6 +1754,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_16_161747) do
               login_activities.created_at
              FROM login_activities
             WHERE (login_activities.success = true)) t0
-    GROUP BY user_id, ip;
+    GROUP BY t0.user_id, t0.ip;
   SQL
 end

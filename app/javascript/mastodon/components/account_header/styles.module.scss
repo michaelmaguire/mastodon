@@ -573,3 +573,51 @@ $button-fallback-breakpoint: $button-breakpoint + 55px;
 .bioButtonsWrapper {
   margin-top: 16px;
 }
+
+// TruAnon verified-identity badge. The pill tint and check color follow the
+// rank, using TruAnon's own defined palette (the same values as the WordPress
+// badge). No native badge variant covers all five ranks — notably the blue
+// "Genuine" — so the palette lives here rather than being forced onto
+// approximate semantic variants. color-mix keeps the fill a soft tint over
+// whatever background the current theme uses.
+.truanonBadge {
+  --ta-color: #6b7280;
+}
+
+.rankGenuine {
+  --ta-color: #2f6ef2;
+}
+
+.rankReliable {
+  --ta-color: #21a45d;
+}
+
+.rankCredible {
+  --ta-color: #6b7280;
+}
+
+.rankCautioned {
+  --ta-color: #d99a06;
+}
+
+.rankDangerous {
+  --ta-color: #d64545;
+}
+
+// Doubled class so these win over the Badge component's own variant
+// background/text rules — across CSS modules, equal single-class specificity
+// would otherwise resolve by stylesheet load order. The rank classes above set
+// --ta-color at single-class specificity so they still override the default.
+.truanonBadge.truanonBadge {
+  background-color: color-mix(
+    in srgb,
+    var(--ta-color) 14%,
+    var(--color-bg-primary)
+  );
+  color: var(--ta-color);
+
+  > svg {
+    fill: var(--ta-color);
+    opacity: 1;
+  }
+}

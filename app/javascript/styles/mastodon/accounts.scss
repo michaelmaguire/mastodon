@@ -312,3 +312,105 @@
     color: var(--color-text-warning);
   }
 }
+
+// === TruAnon ================================================================
+//
+// TruAnon's defined rank palette (same values as the WordPress badge). Declared
+// once here as custom properties so a rank color can be reused anywhere a mark
+// or badge appears — set a `.truanon-rank-*` class next to the mark and it
+// inherits that rank's color.
+:root {
+  --truanon-genuine: #2f6ef2;
+  --truanon-reliable: #21a45d;
+  --truanon-credible: #6b7280;
+  --truanon-cautioned: #d99a06;
+  --truanon-dangerous: #d64545;
+  --truanon-unknown: #6b7280;
+}
+
+.truanon-rank-genuine {
+  --ta-color: var(--truanon-genuine);
+}
+.truanon-rank-reliable {
+  --ta-color: var(--truanon-reliable);
+}
+.truanon-rank-credible {
+  --ta-color: var(--truanon-credible);
+}
+.truanon-rank-cautioned {
+  --ta-color: var(--truanon-cautioned);
+}
+.truanon-rank-dangerous {
+  --ta-color: var(--truanon-dangerous);
+}
+
+// The circle-check mark, colored by the rank class beside it.
+.truanon-mark {
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  fill: var(--ta-color, var(--color-text-success));
+}
+
+// Connected field box. This is Mastodon's OWN former `.account__header__fields`
+// layout, deleted upstream in "Profile: Remove old classes" (#38920). It is
+// required because new Mastodon renders profile fields as separate rounded
+// cards, and there is no native component that produces a single connected box
+// with divider rows. TruAnon injects its verified rows inline alongside the
+// member's native metadata fields here, exactly as the original integration did.
+.account__header__fields {
+  margin: 16px 0;
+  border: 1px solid var(--color-border-primary);
+  border-radius: 8px;
+  overflow: hidden;
+  font-size: 14px;
+  line-height: 20px;
+
+  dl {
+    display: block;
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--color-border-primary);
+  }
+
+  dl:last-child {
+    border-bottom: 0;
+  }
+
+  dt {
+    font-weight: 600;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--color-text-secondary);
+    margin-bottom: 2px;
+  }
+
+  dd {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    color: var(--color-text-primary);
+    font-weight: 500;
+
+    > span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  a {
+    color: var(--color-text-brand);
+    text-decoration: none;
+
+    &:hover,
+    &:focus {
+      text-decoration: underline;
+    }
+  }
+
+  // Verified rows carry the soft success tint; the mark shows the rank color.
+  .verified {
+    background: var(--color-bg-success-softest);
+  }
+}

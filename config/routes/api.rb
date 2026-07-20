@@ -214,6 +214,7 @@ namespace :api, format: false do
 
     resources :accounts, only: [:index, :create, :show] do
       scope module: :accounts do
+        resource :truanon, only: :show, controller: :truanon
         resources :statuses, only: :index
         resources :followers, only: :index, controller: :follower_accounts
         resources :following, only: :index, controller: :following_accounts

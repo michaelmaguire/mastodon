@@ -18,6 +18,8 @@ import {
   MutedBadge,
 } from '../badge';
 
+import { TruanonBadge } from './truanon_badge';
+
 import classes from './styles.module.scss';
 
 export const AccountBadges: FC<{ accountId: string }> = ({ accountId }) => {
@@ -67,6 +69,16 @@ export const AccountBadges: FC<{ accountId: string }> = ({ accountId }) => {
       );
     }
   });
+
+  if (account.truanon) {
+    badges.push(
+      <TruanonBadge
+        key='truanon'
+        rank={account.truanon.rank}
+        score={account.truanon.score}
+      />,
+    );
+  }
 
   if (account.bot) {
     badges.push(<AutomatedBadge key='bot-badge' />);
