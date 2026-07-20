@@ -51,6 +51,8 @@ class Form::AdminSettings
     opt_in_server_recommendation
     postpone_confirmation_emails
     theme_color
+    truanon_service_name
+    truanon_private_key
   ).freeze
 
   INTEGER_KEYS = %i(

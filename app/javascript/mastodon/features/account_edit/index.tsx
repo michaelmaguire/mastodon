@@ -1,121 +1,134 @@
-import { useCallback, useEffect } from 'react';
-import type { FC } from 'react';
+import { useCallback, useEffect } from "react";
+import type { FC } from "react";
 
-import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
+import { defineMessages, FormattedMessage, useIntl } from "react-intl";
 
-import { useHistory } from 'react-router-dom';
+import { useHistory } from "react-router-dom";
 
-import type { ModalType } from '@/mastodon/actions/modal';
-import { openModal } from '@/mastodon/actions/modal';
-import { AccountBio } from '@/mastodon/components/account_bio';
-import { Avatar } from '@/mastodon/components/avatar';
-import { Button } from '@/mastodon/components/button';
-import { DismissibleCallout } from '@/mastodon/components/callout/dismissible';
-import { CustomEmojiProvider } from '@/mastodon/components/emoji/context';
-import { EmojiHTML } from '@/mastodon/components/emoji/html';
-import { ToggleField } from '@/mastodon/components/form_fields';
-import { useElementHandledLink } from '@/mastodon/components/status/handled_link';
-import { useAccount } from '@/mastodon/hooks/useAccount';
-import { useCurrentAccountId } from '@/mastodon/hooks/useAccountId';
-import { useCustomEmojis } from '@/mastodon/hooks/useCustomEmojis';
-import { autoPlayGif } from '@/mastodon/initial_state';
+import type { ModalType } from "@/mastodon/actions/modal";
+import { openModal } from "@/mastodon/actions/modal";
+import { AccountBio } from "@/mastodon/components/account_bio";
+import { Avatar } from "@/mastodon/components/avatar";
+import { Button } from "@/mastodon/components/button";
+import { DismissibleCallout } from "@/mastodon/components/callout/dismissible";
+import { CustomEmojiProvider } from "@/mastodon/components/emoji/context";
+import { EmojiHTML } from "@/mastodon/components/emoji/html";
+import { ToggleField } from "@/mastodon/components/form_fields";
+import { useElementHandledLink } from "@/mastodon/components/status/handled_link";
+import { useAccount } from "@/mastodon/hooks/useAccount";
+import { useCurrentAccountId } from "@/mastodon/hooks/useAccountId";
+import { useCustomEmojis } from "@/mastodon/hooks/useCustomEmojis";
+import { autoPlayGif } from "@/mastodon/initial_state";
 import {
   fetchProfile,
   patchProfile,
-} from '@/mastodon/reducers/slices/profile_edit';
-import { useAppDispatch, useAppSelector } from '@/mastodon/store';
+} from "@/mastodon/reducers/slices/profile_edit";
+import { useAppDispatch, useAppSelector } from "@/mastodon/store";
 
-import { AccountEditColumn, AccountEditEmptyColumn } from './components/column';
-import { EditButton } from './components/edit_button';
-import { AccountField } from './components/field';
-import { AccountFieldActions } from './components/field_actions';
-import { AccountImageEdit } from './components/image_edit';
-import { AccountEditSection } from './components/section';
-import classes from './styles.module.scss';
+import { AccountEditColumn, AccountEditEmptyColumn } from "./components/column";
+import { EditButton } from "./components/edit_button";
+import { AccountField } from "./components/field";
+import { AccountFieldActions } from "./components/field_actions";
+import { AccountImageEdit } from "./components/image_edit";
+import { AccountEditSection } from "./components/section";
+import classes from "./styles.module.scss";
 
 export const messages = defineMessages({
   columnTitle: {
-    id: 'account_edit.column_title',
-    defaultMessage: 'Edit Profile',
+    id: "account_edit.column_title",
+    defaultMessage: "Edit Profile",
   },
   displayNameTitle: {
-    id: 'account_edit.display_name.title',
-    defaultMessage: 'Display name',
+    id: "account_edit.display_name.title",
+    defaultMessage: "Display name",
   },
   displayNamePlaceholder: {
-    id: 'account_edit.display_name.placeholder',
+    id: "account_edit.display_name.placeholder",
     defaultMessage:
-      'Your display name is how your name appears on your profile and in timelines.',
+      "Your display name is how your name appears on your profile and in timelines.",
   },
   displayNameAddLabel: {
-    id: 'account_edit.display_name.add_label',
-    defaultMessage: 'Add display name',
+    id: "account_edit.display_name.add_label",
+    defaultMessage: "Add display name",
   },
   displayNameEditLabel: {
-    id: 'account_edit.display_name.edit_label',
-    defaultMessage: 'Edit display name',
+    id: "account_edit.display_name.edit_label",
+    defaultMessage: "Edit display name",
   },
   bioTitle: {
-    id: 'account_edit.bio.title',
-    defaultMessage: 'Bio',
+    id: "account_edit.bio.title",
+    defaultMessage: "Bio",
   },
   bioPlaceholder: {
-    id: 'account_edit.bio.placeholder',
-    defaultMessage: 'Add a short introduction to help others identify you.',
+    id: "account_edit.bio.placeholder",
+    defaultMessage: "Add a short introduction to help others identify you.",
   },
   bioAddLabel: {
-    id: 'account_edit.bio.add_label',
-    defaultMessage: 'Add bio',
+    id: "account_edit.bio.add_label",
+    defaultMessage: "Add bio",
   },
   bioEditLabel: {
-    id: 'account_edit.bio.edit_label',
-    defaultMessage: 'Edit bio',
+    id: "account_edit.bio.edit_label",
+    defaultMessage: "Edit bio",
+  },
+  truanonTitle: {
+    id: "account_edit.truanon.title",
+    defaultMessage: "Identity display settings",
+  },
+  truanonSubtitle: {
+    id: "account_edit.truanon.subtitle",
+    defaultMessage:
+      "Control how members view and share the things others already know you by.",
+  },
+  truanonTipTitle: {
+    id: "account_edit.truanon.tip_title",
+    defaultMessage: "Tip: Anchoring verified identity",
   },
   customFieldsTitle: {
-    id: 'account_edit.custom_fields.title',
-    defaultMessage: 'Custom fields',
+    id: "account_edit.custom_fields.title",
+    defaultMessage: "Custom fields",
   },
   customFieldsPlaceholder: {
-    id: 'account_edit.custom_fields.placeholder',
+    id: "account_edit.custom_fields.placeholder",
     defaultMessage:
-      'Add your pronouns, external links, or anything else you’d like to share.',
+      "Add your pronouns, external links, or anything else you’d like to share.",
   },
   customFieldsAddLabel: {
-    id: 'account_edit.custom_fields.add_label',
-    defaultMessage: 'Add field',
+    id: "account_edit.custom_fields.add_label",
+    defaultMessage: "Add field",
   },
   customFieldsEditLabel: {
-    id: 'account_edit.custom_fields.edit_label',
-    defaultMessage: 'Edit field',
+    id: "account_edit.custom_fields.edit_label",
+    defaultMessage: "Edit field",
   },
   customFieldsTipTitle: {
-    id: 'account_edit.custom_fields.tip_title',
-    defaultMessage: 'Tip: Adding verified links',
+    id: "account_edit.custom_fields.tip_title",
+    defaultMessage: "Tip: Adding verified links",
   },
   featuredHashtagsTitle: {
-    id: 'account_edit.featured_hashtags.title',
-    defaultMessage: 'Featured hashtags',
+    id: "account_edit.featured_hashtags.title",
+    defaultMessage: "Featured hashtags",
   },
   featuredHashtagsPlaceholder: {
-    id: 'account_edit.featured_hashtags.placeholder',
+    id: "account_edit.featured_hashtags.placeholder",
     defaultMessage:
-      'Help others identify, and have quick access to, your favorite topics.',
+      "Help others identify, and have quick access to, your favorite topics.",
   },
   featuredHashtagsEditLabel: {
-    id: 'account_edit.featured_hashtags.edit_label',
-    defaultMessage: 'Add hashtags',
+    id: "account_edit.featured_hashtags.edit_label",
+    defaultMessage: "Add hashtags",
   },
   profileTabTitle: {
-    id: 'account_edit.profile_tab.title',
-    defaultMessage: 'Profile display settings',
+    id: "account_edit.profile_tab.title",
+    defaultMessage: "Profile display settings",
   },
   profileTabSubtitle: {
-    id: 'account_edit.profile_tab.subtitle',
-    defaultMessage: 'Customize how your profile is displayed.',
+    id: "account_edit.profile_tab.subtitle",
+    defaultMessage: "Customize how your profile is displayed.",
   },
   advancedSettingsTitle: {
-    id: 'account_edit.advanced_settings.title',
-    defaultMessage: 'Advanced settings',
+    id: "account_edit.advanced_settings.title",
+    defaultMessage: "Advanced settings",
   },
 });
 
@@ -155,27 +168,36 @@ export const AccountEdit: FC = () => {
     [dispatch],
   );
   const handleNameEdit = useCallback(() => {
-    handleOpenModal('ACCOUNT_EDIT_NAME', { ignoreFocus: true });
+    handleOpenModal("ACCOUNT_EDIT_NAME", { ignoreFocus: true });
   }, [handleOpenModal]);
   const handleBioEdit = useCallback(() => {
-    handleOpenModal('ACCOUNT_EDIT_BIO', { ignoreFocus: true });
+    handleOpenModal("ACCOUNT_EDIT_BIO", { ignoreFocus: true });
   }, [handleOpenModal]);
   const handleCustomFieldAdd = useCallback(() => {
-    handleOpenModal('ACCOUNT_EDIT_FIELD_EDIT');
+    handleOpenModal("ACCOUNT_EDIT_FIELD_EDIT");
   }, [handleOpenModal]);
   const handleCustomFieldReorder = useCallback(() => {
-    handleOpenModal('ACCOUNT_EDIT_FIELDS_REORDER');
+    handleOpenModal("ACCOUNT_EDIT_FIELDS_REORDER");
   }, [handleOpenModal]);
   const handleCustomFieldsVerifiedHelp = useCallback(() => {
-    handleOpenModal('ACCOUNT_EDIT_VERIFY_LINKS');
+    handleOpenModal("ACCOUNT_EDIT_VERIFY_LINKS");
   }, [handleOpenModal]);
   const handleProfileDisplayEdit = useCallback(() => {
-    handleOpenModal('ACCOUNT_EDIT_PROFILE_DISPLAY');
+    handleOpenModal("ACCOUNT_EDIT_PROFILE_DISPLAY");
   }, [handleOpenModal]);
+  const handleTruanonHelp = useCallback(() => {
+    handleOpenModal("ACCOUNT_EDIT_TRUANON");
+  }, [handleOpenModal]);
+  const handleTruanonSettings = useCallback(() => {
+    handleOpenModal("ACCOUNT_EDIT_TRUANON_SETTINGS");
+  }, [handleOpenModal]);
+  const handleTruanonManage = useCallback(() => {
+    window.location.assign("/settings/verification");
+  }, []);
 
   const history = useHistory();
   const handleFeaturedTagsEdit = useCallback(() => {
-    history.push('/profile/featured_tags');
+    history.push("/profile/featured_tags");
   }, [history]);
 
   const handleBotToggle = useCallback(() => {
@@ -205,12 +227,12 @@ export const AccountEdit: FC = () => {
     >
       <header>
         <div className={classes.profileImage}>
-          {headerSrc && <img src={headerSrc} alt='' />}
-          <AccountImageEdit location='header' />
+          {headerSrc && <img src={headerSrc} alt="" />}
+          <AccountImageEdit location="header" />
         </div>
         <div className={classes.avatar}>
           <Avatar account={account} size={80} />
-          <AccountImageEdit location='avatar' />
+          <AccountImageEdit location="avatar" />
         </div>
       </header>
 
@@ -256,6 +278,55 @@ export const AccountEdit: FC = () => {
         </AccountEditSection>
 
         <AccountEditSection
+          title={messages.truanonTitle}
+          description={messages.truanonSubtitle}
+          showDescription
+          buttons={
+            account.truanon ? (
+              <Button
+                className={classes.editButton}
+                onClick={handleTruanonSettings}
+              >
+                <FormattedMessage
+                  id="account_edit.truanon.button_label"
+                  defaultMessage="Manage"
+                />
+              </Button>
+            ) : (
+              <Button
+                className={classes.editButton}
+                onClick={handleTruanonManage}
+              >
+                <FormattedMessage
+                  id="account_edit.truanon.anchor_label"
+                  defaultMessage="Get verified"
+                />
+              </Button>
+            )
+          }
+        >
+          <Button
+            onClick={handleTruanonHelp}
+            className={classes.verifiedLinkHelpButton}
+            plain
+          >
+            <FormattedMessage
+              id="account_edit.truanon.help"
+              defaultMessage="How do I secure this profile as my own?"
+            />
+          </Button>
+          <DismissibleCallout
+            id="profile_edit_truanon_tip"
+            title={intl.formatMessage(messages.truanonTipTitle)}
+          >
+            <FormattedMessage
+              id="account_edit.truanon.tip_content"
+              defaultMessage="Show you are trustworthy while staying as private or as public as you choose."
+            />
+          </DismissibleCallout>
+        </AccountEditSection>
+
+        <AccountEditSection
           title={messages.customFieldsTitle}
           description={messages.customFieldsPlaceholder}
           showDescription={!hasFields}
@@ -267,8 +338,8 @@ export const AccountEdit: FC = () => {
                   onClick={handleCustomFieldReorder}
                 >
                   <FormattedMessage
-                    id='account_edit.custom_fields.reorder_button'
-                    defaultMessage='Reorder fields'
+                    id="account_edit.custom_fields.reorder_button"
+                    defaultMessage="Reorder fields"
                   />
                 </Button>
               )}
@@ -299,18 +370,18 @@ export const AccountEdit: FC = () => {
             plain
           >
             <FormattedMessage
-              id='account_edit.custom_fields.verified_hint'
-              defaultMessage='How do I add a verified link?'
+              id="account_edit.custom_fields.verified_hint"
+              defaultMessage="How do I add a verified link?"
             />
           </Button>
           {!hasFields && (
             <DismissibleCallout
-              id='profile_edit_fields_tip'
+              id="profile_edit_fields_tip"
               title={intl.formatMessage(messages.customFieldsTipTitle)}
             >
               <FormattedMessage
-                id='account_edit.custom_fields.tip_content'
-                defaultMessage='You can easily add credibility to your Mastodon account by verifying links to any websites you own.'
+                id="account_edit.custom_fields.tip_content"
+                defaultMessage="You can easily add credibility to your Mastodon account by verifying links to any websites you own."
               />
             </DismissibleCallout>
           )}
@@ -328,7 +399,7 @@ export const AccountEdit: FC = () => {
             />
           }
         >
-          {profile.featuredTags.map((tag) => `#${tag.name}`).join(', ')}
+          {profile.featuredTags.map((tag) => `#${tag.name}`).join(", ")}
         </AccountEditSection>
 
         <AccountEditSection
@@ -341,8 +412,8 @@ export const AccountEdit: FC = () => {
               onClick={handleProfileDisplayEdit}
             >
               <FormattedMessage
-                id='account_edit.profile_tab.button_label'
-                defaultMessage='Customize'
+                id="account_edit.profile_tab.button_label"
+                defaultMessage="Customize"
               />
             </Button>
           }
@@ -355,14 +426,14 @@ export const AccountEdit: FC = () => {
             disabled={isPending}
             label={
               <FormattedMessage
-                id='account_edit.advanced_settings.bot_label'
-                defaultMessage='Automated account'
+                id="account_edit.advanced_settings.bot_label"
+                defaultMessage="Automated account"
               />
             }
             hint={
               <FormattedMessage
-                id='account_edit.advanced_settings.bot_hint'
-                defaultMessage='Signal to others that the account mainly performs automated actions and might not be monitored'
+                id="account_edit.advanced_settings.bot_hint"
+                defaultMessage="Signal to others that the account mainly performs automated actions and might not be monitored"
               />
             }
           />

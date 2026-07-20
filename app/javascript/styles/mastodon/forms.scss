@@ -1202,7 +1202,8 @@ code {
     font-family: var(--font-monospace);
   }
 
-  button {
+  button,
+  .button {
     flex: 0 0 auto;
     margin: 4px;
     text-transform: none;

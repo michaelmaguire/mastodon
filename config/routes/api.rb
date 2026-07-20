@@ -124,6 +124,8 @@ namespace :api, format: false do
       end
     end
 
+    resource :truanon_settings, only: [:show, :update], controller: :truanon_settings
+
     namespace :apps do
       get :verify_credentials, to: 'credentials#show'
     end

@@ -1,0 +1,30 @@
+- content_for :page_title do
+  = t('admin.settings.truanon.title')
+
+- content_for :heading do
+  %h1= t('admin.settings.title')
+  = render partial: 'admin/settings/shared/links'
+
+= simple_form_for @admin_settings, url: admin_settings_truanon_path do |f|
+  = render 'shared/error_messages', object: @admin_settings
+
+  %p.lead= t('admin.settings.truanon.preamble')
+
+  - effective_key = Setting.truanon_private_key.presence || ENV['TRUANON_PRIVATE_KEY']
+
+  .fields-group
+    = f.input :truanon_service_name,
+              wrapper: :with_label,
+              label: t('admin.settings.truanon.service_name'),
+              hint: t('admin.settings.truanon.service_name_hint'),
+              input_html: { value: Setting.truanon_service_name.presence || ENV['TRUANON_SERVICE_NAME'] }
+
+  .fields-group
+    = f.input :truanon_private_key,
+              wrapper: :with_label,
+              label: t('admin.settings.truanon.private_key'),
+              hint: effective_key.present? ? t('admin.settings.truanon.private_key_set_hint') : t('admin.settings.truanon.private_key_hint'),
+              input_html: { value: '', type: 'password', autocomplete: 'new-password' }
+
+  .actions
+    = f.button :button, t('generic.save_changes'), type: :submit

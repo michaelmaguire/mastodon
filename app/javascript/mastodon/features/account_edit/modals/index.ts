@@ -6,4 +6,6 @@ export * from './image_delete';
 export * from './image_upload';
 export * from './name_modal';
 export * from './profile_display_modal';
+export * from './truanon_modal';
+export * from './truanon_settings_modal';
 export * from './verified_modal';

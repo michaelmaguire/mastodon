@@ -35,9 +35,7 @@ class Api::V1::AccountsController < Api::BaseController
     # Viewing a member's full profile is the one place we hit TruAnon: refresh
     # the badge cache live, switch-gated, in the background. The badge itself
     # always paints from the cached rank/score, never blocking on this.
-    if @account.local? && @account.user&.settings&.[](:wants_verified_identity)
-      TruanonRefreshWorker.perform_async(@account.id)
-    end
+    TruanonRefreshWorker.perform_async(@account.id) if @account.local? && @account.user&.settings&.[](:wants_verified_identity)
     render json: @account, serializer: REST::AccountSerializer
   end
 

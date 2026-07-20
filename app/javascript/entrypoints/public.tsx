@@ -279,6 +279,35 @@ async function loaded() {
   });
 }
 
+// TruAnon "Verify" opens the one-time anchor flow in a tall popup instead of
+// navigating away; when the member finishes (or closes) it, the page reloads so
+// their newly anchored status shows.
+on('click', '[data-truanon-verify]', (e) => {
+  const trigger =
+    e.target instanceof Element
+      ? e.target.closest<HTMLElement>('[data-truanon-verify]')
+      : null;
+  const url = trigger?.dataset.truanonVerify;
+  if (!url) return;
+
+  e.preventDefault();
+
+  const popup = window.open(url, 'truanon_verify', 'width=480,height=760');
+
+  // Popup blocked — fall back to a full-page navigation.
+  if (!popup) {
+    window.location.assign(url);
+    return;
+  }
+
+  const timer = window.setInterval(() => {
+    if (popup.closed) {
+      window.clearInterval(timer);
+      window.location.reload();
+    }
+  }, 800);
+});
+
 on('change', '#edit_profile input[type=file]', ({ target }) => {
   if (!(target instanceof HTMLInputElement)) return;
 

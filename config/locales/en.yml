@@ -1086,6 +1086,14 @@ en:
       appearance:
         preamble: Customize Mastodon's web interface.
         title: Appearance
+      truanon:
+        title: TruAnon
+        preamble: Configure the TruAnon service that provides automatic identity verification. Members verify their identity once and a rank badge follows them across the server.
+        service_name: Service name
+        service_name_hint: The service identifier issued to this server by TruAnon.
+        private_key: Private key
+        private_key_hint: The private key issued to this server by TruAnon. It is sent only server-to-server and never reaches a browser.
+        private_key_set_hint: A key is already saved. Leave this blank to keep it, or enter a new key to replace it.
       branding:
         preamble: Your server's branding differentiates it from other servers in the network. This information may be displayed across a variety of environments, such as Mastodon's web interface, native applications, in link previews on other websites and within messaging apps, and so on. For this reason, it is best to keep this information clear, short and concise.
         title: Branding

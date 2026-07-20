@@ -18,12 +18,17 @@ class TruAnonService
   API_BASE = 'https://truanon.com/api'
   API_V2   = "#{API_BASE}/v2".freeze
 
+  IGNORED_ANCHORS = %w(fullname bio).freeze
+  SECTION_LABELS  = { 'personal' => 'Personal', 'contact' => 'Contact', 'social' => 'Social' }.freeze
+
   attr_reader :verify_url, :public_profile_url
 
   def initialize(account)
     @account      = account
-    @service_name = ENV['TRUANON_SERVICE_NAME']
-    @private_key  = ENV['TRUANON_PRIVATE_KEY']
+    # Admin settings take precedence; the ENV vars remain a fallback so an
+    # operator can configure the service either way.
+    @service_name = Setting.truanon_service_name.presence || ENV.fetch('TRUANON_SERVICE_NAME', nil)
+    @private_key  = Setting.truanon_private_key.presence || ENV.fetch('TRUANON_PRIVATE_KEY', nil)
   end
 
   def configured?
@@ -32,7 +37,7 @@ class TruAnonService
 
   # Live profile fetch (v2). Returns the parsed body hash on a clean 200, else
   # nil — the strict rule the cache/badge path depends on.
-  def get_profile
+  def fetch_profile
     return nil unless configured?
 
     result = fetch("#{API_V2}/get_profile", id: @account.username, service: @service_name)
@@ -47,10 +52,16 @@ class TruAnonService
 
     result = fetch("#{API_V2}/get_profile", id: @account.username, service: @service_name)
     body   = result[:body]
+    code   = body.is_a?(Hash) ? body['code'] : nil
 
-    unless result[:status] == 200 && body.is_a?(Hash) && body['type'] != 'error'
-      return { configured: true, error: true, error_code: (body.is_a?(Hash) ? body['code'] : nil) }
+    # A member the service has never seen simply hasn't anchored yet — offer the
+    # verify flow rather than reporting this as an error.
+    if code == 'member_unknown'
+      @verify_url = build_verify_url
+      return { configured: true, anchored: false }
     end
+
+    return { configured: true, error: true, error_code: code } unless result[:status] == 200 && body.is_a?(Hash) && body['type'] != 'error'
 
     @public_profile_url = extract_public_profile_url(body)
 
@@ -67,7 +78,7 @@ class TruAnonService
   def badge_data
     return unknown unless configured? && @account.user&.settings&.[](:wants_verified_identity)
 
-    body = get_profile
+    body = fetch_profile
     return unknown if body.nil? || !anchored?(body)
 
     { verified: true, rank: body['rank'], score: body['score'].to_s }
@@ -94,7 +105,7 @@ class TruAnonService
   def card_data
     return { sections: [] } unless configured? && @account.user&.settings&.[](:wants_verified_identity)
 
-    body = get_profile
+    body = fetch_profile
     return { sections: [] } unless body.is_a?(Hash) && anchored?(body)
 
     build_sections(body).merge(rank: body['rank'])
@@ -106,16 +117,13 @@ class TruAnonService
     { verified: false, rank: 'Unknown', score: '' }
   end
 
-  IGNORED_ANCHORS = %w[fullname bio].freeze
-  SECTION_LABELS  = { 'personal' => 'Personal', 'contact' => 'Contact', 'social' => 'Social' }.freeze
-
   def build_sections(body)
     settings = @account.user&.settings
     private_mode = settings&.[](:make_private)
     allowed = {
       'personal' => settings&.[](:show_personal),
-      'contact'  => settings&.[](:show_contact),
-      'social'   => settings&.[](:show_social),
+      'contact' => settings&.[](:show_contact),
+      'social' => settings&.[](:show_social),
     }
 
     grouped = { 'personal' => [], 'contact' => [], 'social' => [] }
@@ -196,14 +204,14 @@ class TruAnonService
 
     res = http.request(req)
     { status: res.code.to_i, body: parse(res.body) }
-  rescue StandardError => e
+  rescue => e
     Rails.logger.warn("TruAnonService: #{e.class} #{e.message}")
     { status: 0, body: nil }
   end
 
   def parse(raw)
     JSON.parse(raw)
-  rescue StandardError
+  rescue
     nil
   end
 end

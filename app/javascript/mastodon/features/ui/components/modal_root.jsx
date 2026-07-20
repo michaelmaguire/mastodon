@@ -99,6 +99,8 @@ export const MODAL_COMPONENTS = {
   'ACCOUNT_EDIT_BIO': accountEditModal('BioModal'),
   'ACCOUNT_EDIT_PROFILE_DISPLAY': accountEditModal('ProfileDisplayModal'),
   'ACCOUNT_EDIT_VERIFY_LINKS': accountEditModal('VerifiedModal'),
+  'ACCOUNT_EDIT_TRUANON': accountEditModal('TruanonModal'),
+  'ACCOUNT_EDIT_TRUANON_SETTINGS': accountEditModal('TruanonSettingsModal'),
   'ACCOUNT_EDIT_FIELD_EDIT': accountEditModal('EditFieldModal'),
   'ACCOUNT_EDIT_FIELD_DELETE': accountEditModal('DeleteFieldModal'),
   'ACCOUNT_EDIT_FIELDS_REORDER': accountEditModal('ReorderFieldsModal'),

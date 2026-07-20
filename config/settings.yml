@@ -39,6 +39,8 @@ defaults: &defaults
   opt_in_server_directory: false
   opt_in_server_recommendation: false
   wrapstodon: true
+  truanon_service_name: ''
+  truanon_private_key: ''
 
 development:
   <<: *defaults
