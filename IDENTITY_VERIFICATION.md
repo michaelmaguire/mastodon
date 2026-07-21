@@ -21,8 +21,16 @@ pluggable provider rather than a single hardcoded integration:
   `app/javascript/mastodon/components/avatar.tsx`
 - Member switches: Edit Profile section and `Settings → Verification`, both
   reading/writing the same `user.settings`
+
+  ![Edit Profile page with an "Identity display settings" section, its Manage button, and a tip about anchoring verified identity.](docs/identity-verification-edit-profile.png)
+
+  ![The Identity display settings modal, with toggles for Use verified identity, Show personal details, Show contact info, Show social profiles, and Private mode.](docs/identity-verification-manage-modal.png)
+
 - Admin config: `Server Settings → Identity verification` — a real
   enable/disable switch, inert until a provider is configured
+
+  ![Admin Server settings page's Identity verification tab, with an Enable checkbox and Service name / Private key provider credential fields.](docs/identity-verification-admin.png)
+
 - Migration: `db/migrate/20260719193000_add_truanon_badge_to_accounts.rb`
 
 ## Privacy model
