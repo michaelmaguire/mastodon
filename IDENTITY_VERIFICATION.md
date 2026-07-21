@@ -1,5 +1,7 @@
 # Identity verification — what's actually in this branch
 
+![A Mastodon profile with a "Genuine (5.0 of 5)" badge next to the display name, and a connected field box below showing Verified Identity, Personal, and social properties (Medium, Web Domain, Twitter, LinkedIn), each with a rank-colored check.](docs/identity-verification-profile.png)
+
 An extension to Mastodon's manual `rel="me"` link verification, built as a
 pluggable provider rather than a single hardcoded integration:
 
