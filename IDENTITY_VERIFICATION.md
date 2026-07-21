@@ -26,6 +26,11 @@ pluggable provider rather than a single hardcoded integration:
 
   ![The Identity display settings modal, with toggles for Use verified identity, Show personal details, Show contact info, Show social profiles, and Private mode.](docs/identity-verification-manage-modal.png)
 
+  ![Settings → Verification page, showing Mastodon's native manual "Website verification" (rel="me") side by side with a TruAnon "Automatic verification" popup mid-flow, asking the member to securely assign ownership.](docs/identity-verification-settings-flow.png)
+
+  This is the pitch in one screenshot: automatic verification sitting right
+  next to Mastodon's own manual `rel="me"` flow, not replacing it.
+
 - Admin config: `Server Settings → Identity verification` — a real
   enable/disable switch, inert until a provider is configured
 
