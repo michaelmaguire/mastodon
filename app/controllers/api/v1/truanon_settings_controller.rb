@@ -25,7 +25,7 @@ class Api::V1::TruanonSettingsController < Api::BaseController
     current_user.save!
     # The master switch changes the cached badge — recompute it synchronously so
     # the client can immediately re-read the account and reflect Unknown/rank.
-    TruAnonService.new(current_account).refresh_cache! if params.key?(:wants_verified_identity)
+    IdentityVerification.for(current_account).refresh_cache! if params.key?(:wants_verified_identity)
     render json: settings_hash
   end
 

@@ -25,10 +25,11 @@ class REST::AccountSerializer < ActiveModel::Serializer
   attribute :email_subscriptions, if: -> { Rails.application.config.x.email_subscriptions && Setting.email_subscriptions }
 
   attribute :invalid_handle, if: :invalid_handle?
-  # TruAnon badge cache: rank + score only (color derives from rank). Rides every
-  # account so the badge and per-post checkmark render from it, no per-view call.
-  # Never a link, never an anchor — those are fetched live into the profile boxes.
-  attribute :truanon, if: :show_truanon?
+  # Identity-verification badge cache: rank + score only (color derives from
+  # rank). Rides every account so the badge and per-post checkmark render from
+  # it, no per-view call. Never a link, never an anchor — those are fetched
+  # live into the profile boxes.
+  attribute :verified_identity, if: :show_verified_identity?
 
   class AccountDecorator < SimpleDelegator
     def self.model_name
@@ -74,7 +75,7 @@ class REST::AccountSerializer < ActiveModel::Serializer
     object.unavailable? ? '' : account_bio_format(object)
   end
 
-  def truanon
+  def verified_identity
     if object.truanon_verified?
       { rank: object.truanon_rank, score: object.truanon_score }
     else
@@ -82,10 +83,11 @@ class REST::AccountSerializer < ActiveModel::Serializer
     end
   end
 
-  # Local members carry a TruAnon state whenever the server is configured: a
-  # verified rank, or "Unknown" until they anchor (or after they turn it off).
-  def show_truanon?
-    object.local? && TruAnonService.active?
+  # Local members carry an identity-verification state whenever the server is
+  # configured: a verified rank, or "Unknown" until they anchor (or after they
+  # turn it off).
+  def show_verified_identity?
+    object.local? && IdentityVerification.active?
   end
 
   def url

@@ -10,7 +10,7 @@ class Api::V1::Accounts::TruanonController < Api::BaseController
   before_action :set_account
 
   def show
-    render json: TruAnonService.new(@account).card_data
+    render json: IdentityVerification.for(@account).card_data
   end
 
   private

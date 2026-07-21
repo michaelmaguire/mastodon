@@ -40,15 +40,15 @@
     The rel="me" protocol verifies websites and profiles you want to be known by. Identity makes this easier and extends to social or blog sites that don’t support HTML editing.
 
   - if @truanon[:configured] == false
-    %p.lead A server administrator must add the TruAnon service name and key before this can be used.
+    %p.lead A server administrator must add a provider's service name and key before this can be used.
   - elsif @truanon[:disabled]
     %p.lead Automatic verification is currently turned off on this server.
   - else
     - if @truanon[:error]
       - if @truanon[:error_code] == 'service_inactive'
-        %p.lead This server’s TruAnon service is currently disabled. A server administrator needs to enable it before verification will work.
+        %p.lead This server’s provider account is currently disabled. A server administrator needs to re-enable it before verification will work.
       - else
-        %p.lead TruAnon is unreachable right now — your current status is unchanged. Try again shortly.
+        %p.lead Automatic verification is unreachable right now — your current status is unchanged. Try again shortly.
     - elsif @truanon[:anchored]
       - ta_href = @truanon_public_profile_url.to_s.match?(%r{\Ahttps?://}i) ? @truanon_public_profile_url : "https://#{@truanon_public_profile_url}"
       .fields-group

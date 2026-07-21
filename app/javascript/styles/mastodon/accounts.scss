@@ -313,39 +313,39 @@
   }
 }
 
-// === TruAnon ================================================================
+// === Identity verification ==================================================
 //
-// TruAnon's defined rank palette (same values as the WordPress badge). Declared
-// once here as custom properties so a rank color can be reused anywhere a mark
-// or badge appears — set a `.truanon-rank-*` class next to the mark and it
-// inherits that rank's color.
+// The rank palette for automatic identity verification (provider-defined;
+// TruAnon's values today). Declared once here as custom properties so a rank
+// color can be reused anywhere a mark or badge appears — set a
+// `.identity-rank-*` class next to the mark and it inherits that rank's color.
 :root {
-  --truanon-genuine: #2f6ef2;
-  --truanon-reliable: #21a45d;
-  --truanon-credible: #6b7280;
-  --truanon-cautioned: #d99a06;
-  --truanon-dangerous: #d64545;
-  --truanon-unknown: #8a8f98;
+  --identity-rank-genuine: #2f6ef2;
+  --identity-rank-reliable: #21a45d;
+  --identity-rank-credible: #6b7280;
+  --identity-rank-cautioned: #d99a06;
+  --identity-rank-dangerous: #d64545;
+  --identity-rank-unknown: #8a8f98;
 }
 
-.truanon-rank-genuine {
-  --ta-color: var(--truanon-genuine);
+.identity-rank-genuine {
+  --ta-color: var(--identity-rank-genuine);
 }
-.truanon-rank-reliable {
-  --ta-color: var(--truanon-reliable);
+.identity-rank-reliable {
+  --ta-color: var(--identity-rank-reliable);
 }
-.truanon-rank-credible {
-  --ta-color: var(--truanon-credible);
+.identity-rank-credible {
+  --ta-color: var(--identity-rank-credible);
 }
-.truanon-rank-cautioned {
-  --ta-color: var(--truanon-cautioned);
+.identity-rank-cautioned {
+  --ta-color: var(--identity-rank-cautioned);
 }
-.truanon-rank-dangerous {
-  --ta-color: var(--truanon-dangerous);
+.identity-rank-dangerous {
+  --ta-color: var(--identity-rank-dangerous);
 }
 
 // The circle-check mark, colored by the rank class beside it.
-.truanon-mark {
+.identity-verified-mark {
   flex: 0 0 auto;
   width: 16px;
   height: 16px;

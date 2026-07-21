@@ -151,7 +151,7 @@ export const AccountHeader: React.FC<{
 
               <AccountBio showDropdown accountId={accountId} />
 
-              {account.truanon ? (
+              {account.verified_identity ? (
                 <TruanonFields accountId={accountId} />
               ) : (
                 <AccountHeaderFields accountId={accountId} />

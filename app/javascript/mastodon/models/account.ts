@@ -43,7 +43,7 @@ const AccountRoleFactory = ImmutableRecord<AccountRoleShape>({
 
 // Account
 export interface AccountShape extends Required<
-  Omit<ApiAccountJSON, 'emojis' | 'fields' | 'roles' | 'moved' | 'url' | 'truanon'>
+  Omit<ApiAccountJSON, 'emojis' | 'fields' | 'roles' | 'moved' | 'url' | 'verified_identity'>
 > {
   emojis: ImmutableList<CustomEmoji>;
   fields: ImmutableList<AccountField>;
@@ -54,7 +54,7 @@ export interface AccountShape extends Required<
   hidden: boolean;
   moved: string | null;
   url: string;
-  truanon?: { rank: string; score: string | null };
+  verified_identity?: { rank: string; score: string | null };
 }
 export type AccountShapeFull = Omit<
   AccountShape,
@@ -117,7 +117,7 @@ export const accountDefaultValues: AccountShape = {
   // This comes from `ApiMutedAccountJSON`, but we should eventually
   // store that in a different object.
   mute_expires_at: null,
-  truanon: undefined,
+  verified_identity: undefined,
 };
 
 const AccountFactory = ImmutableRecord<AccountShape>(accountDefaultValues);

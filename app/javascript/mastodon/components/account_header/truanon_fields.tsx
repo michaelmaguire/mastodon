@@ -5,20 +5,20 @@ import TruanonVerified from "@/images/icons/truanon_verified.svg?react";
 import { apiRequestGet } from "@/mastodon/api";
 import { useAccount } from "@/mastodon/hooks/useAccount";
 
-// TruAnon verified identity. Rendered the way the original fork did it: the
-// member's native profile fields and the TruAnon verified rows share ONE
-// connected `account__header__fields` box (see accounts.scss), as sibling `dl`
-// rows — not a separate stack of cards. When TruAnon is active this box stands
+// Verified identity. Rendered the way the original fork did it: the member's
+// native profile fields and the verified rows share ONE connected
+// `account__header__fields` box (see accounts.scss), as sibling `dl` rows —
+// not a separate stack of cards. When verification is active this box stands
 // in for the native fields list (index.tsx), so the native metadata still shows
 // as the first, un-verified rows.
 //
 // Row order:
 //   * the member's native metadata fields (0–many; e.g. their rel=me link),
-//   * "Verified Identity" — a link to their public TruAnon profile,
+//   * "Verified Identity" — a link to their public verified-identity profile,
 //   * "Personal" — gender/pronouns, age, then location, as one comma list,
 //   * one row per social/contact property, linking via the full username path.
 //
-// Nothing identifying is stored: the TruAnon rows are fetched per view.
+// Nothing identifying is stored: the verified rows are fetched per view.
 
 interface CardItem {
   type: string;
@@ -148,7 +148,7 @@ export const TruanonFields: FC<{ accountId: string }> = ({ accountId }) => {
   }
 
   const rankClass = data?.rank
-    ? `truanon-rank-${data.rank.toLowerCase()}`
+    ? `identity-rank-${data.rank.toLowerCase()}`
     : undefined;
 
   return (
@@ -158,7 +158,9 @@ export const TruanonFields: FC<{ accountId: string }> = ({ accountId }) => {
           <dt className="translate">{row.name}</dt>
           <dd className="translate">
             {row.verified && (
-              <TruanonVerified className={`truanon-mark ${rankClass ?? ""}`} />
+              <TruanonVerified
+                className={`identity-verified-mark ${rankClass ?? ""}`}
+              />
             )}
             <span>{row.value}</span>
           </dd>

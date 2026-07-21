@@ -276,15 +276,16 @@ export const AccountEdit: FC = () => {
           />
         </AccountEditSection>
 
-        {/* Only when TruAnon is active on this server (admin-enabled +
-            configured); the account carries `truanon` only then. */}
-        {account.truanon && (
+        {/* Only when identity verification is active on this server
+            (admin-enabled + configured); the account carries
+            `verified_identity` only then. */}
+        {account.verified_identity && (
           <AccountEditSection
             title={messages.truanonTitle}
             description={messages.truanonSubtitle}
             showDescription
             buttons={
-              account.truanon.rank !== "Unknown" ? (
+              account.verified_identity.rank !== "Unknown" ? (
                 <Button
                   className={classes.editButton}
                   onClick={handleTruanonSettings}

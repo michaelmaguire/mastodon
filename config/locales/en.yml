@@ -1087,17 +1087,17 @@ en:
         preamble: Customize Mastodon's web interface.
         title: Appearance
       truanon:
-        title: TruAnon
-        preamble: To enable Automatic Verified Identity, add your TruAnon service and private key here.
-        get_credentials_html: If you need keys, visit %{link} to set up your instance namespace and get the private key.
-        enabled: Enable TruAnon
+        title: Identity verification
+        preamble: Identity verification extends rel="me" link verification with a continuous, privacy-forward alternative — a member anchors their identity once and a rank follows them across the server, on their own terms.
+        get_credentials_html: This server's provider is TruAnon, free for Mastodon instances. Visit %{link} to set up your instance namespace and get your credentials.
+        enabled: Enable identity verification
         enabled_hint: Turn the whole integration on or off. When off, no badges, rings, or member options appear anywhere.
-        enabled_needs_config: Add a service name and key below first — TruAnon can’t be enabled without them.
-        credentials: Credentials
+        enabled_needs_config: Add a service name and key below first — verification can’t be enabled without them.
+        credentials: Provider credentials
         service_name: Service name
-        service_name_hint: The service identifier issued to this server by TruAnon.
+        service_name_hint: The service identifier issued to this server by your provider.
         private_key: Private key
-        private_key_hint: The private key issued to this server by TruAnon. It is sent only server-to-server and never reaches a browser.
+        private_key_hint: The private key issued to this server by your provider. It is sent only server-to-server and never reaches a browser.
         private_key_set_hint: A key is already saved. Leave this blank to keep it, or enter a new key to replace it.
       branding:
         preamble: Your server's branding differentiates it from other servers in the network. This information may be displayed across a variety of environments, such as Mastodon's web interface, native applications, in link previews on other websites and within messaging apps, and so on. For this reason, it is best to keep this information clear, short and concise.

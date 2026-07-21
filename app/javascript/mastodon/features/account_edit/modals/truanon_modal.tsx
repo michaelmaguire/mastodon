@@ -7,9 +7,10 @@ import { DialogModal } from "../../ui/components/dialog_modal";
 
 import classes from "./styles.module.scss";
 
-// The TruAnon companion to the "How to add a verified link" modal: explains
-// anchoring a verified identity and controlling what others see, then points to
-// the Verification page where the anchor flow and privacy switches live.
+// The identity-verification companion to the "How to add a verified link"
+// modal: explains anchoring a verified identity and controlling what others
+// see, then points to the Verification page where the anchor flow and privacy
+// switches live.
 export const TruanonModal: FC<DialogModalProps> = ({ onClose }) => (
   <DialogModal
     onClose={onClose}

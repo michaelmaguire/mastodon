@@ -13,6 +13,6 @@ class TruanonRefreshWorker
     account = Account.find_by(id: account_id)
     return unless account&.local?
 
-    TruAnonService.new(account).refresh_cache!
+    IdentityVerification.for(account).refresh_cache!
   end
 end

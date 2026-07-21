@@ -70,12 +70,12 @@ export const AccountBadges: FC<{ accountId: string }> = ({ accountId }) => {
     }
   });
 
-  if (account.truanon) {
+  if (account.verified_identity) {
     badges.push(
       <TruanonBadge
-        key='truanon'
-        rank={account.truanon.rank}
-        score={account.truanon.score}
+        key='verified-identity'
+        rank={account.verified_identity.rank}
+        score={account.verified_identity.score}
       />,
     );
   }

@@ -27,7 +27,7 @@ class Settings::VerificationsController < Settings::BaseController
     saved = current_user.update(user_settings_params)
     # Recompute the cached badge synchronously so the reloaded page reflects
     # Unknown/rank immediately (the anchor itself is untouched).
-    TruAnonService.new(@account).refresh_cache! if saved
+    IdentityVerification.for(@account).refresh_cache! if saved
     saved
   end
 
@@ -60,7 +60,7 @@ class Settings::VerificationsController < Settings::BaseController
   # anchored, a one-time verify URL. Cheap enough for a settings page; the
   # per-viewer badge fetch (switch-gated + cached) is a separate concern.
   def set_truanon
-    service = TruAnonService.new(@account)
+    service = IdentityVerification.for(@account)
     @truanon = service.resolve_verification
     @truanon_verify_url = service.verify_url
     @truanon_public_profile_url = service.public_profile_url

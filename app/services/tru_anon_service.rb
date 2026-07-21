@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 
-# TruAnon — automatic identity verification for Mastodon.
-#
-# The continuous, privacy-forward companion to the manual rel="me" link
-# verification Mastodon already offers: a member anchors their identity once and
-# a rank/score badge follows them across the site, on their own terms.
+# TruAnon — the reference IdentityVerificationProvider (see that class for the
+# pluggable contract this implements).
 #
 # Contract mirrors the maintained TruAnon WordPress plugin:
 #   * Current v2 API (https://truanon.com/api/v2); the private key travels in the
@@ -14,7 +11,7 @@
 #   * The badge fetch is gated on the member's `wants_verified_identity` switch
 #     (see #badge_data). The owner panel (#resolve_verification) fetches live so a
 #     member can always see and manage their own status.
-class TruAnonService
+class TruAnonService < IdentityVerificationProvider
   API_BASE = 'https://truanon.com/api'
   API_V2   = "#{API_BASE}/v2".freeze
 
@@ -49,7 +46,7 @@ class TruAnonService
   end
 
   def initialize(account)
-    @account      = account
+    super
     @service_name = self.class.service_name
     @private_key  = self.class.private_key
   end

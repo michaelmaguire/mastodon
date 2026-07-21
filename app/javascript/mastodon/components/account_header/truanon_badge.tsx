@@ -65,7 +65,7 @@ export const TruanonBadge: FC<{ rank: string; score: string | null }> = ({
         <Badge
           icon={<TruanonVerified />}
           label={isUnknown ? rank : `${rank} (${score} of 5)`}
-          className={classNames(classes.truanonBadge, classes[`rank${rank}`])}
+          className={classNames(classes.identityBadge, classes[`rank${rank}`])}
         />
       </button>
 
@@ -86,7 +86,7 @@ export const TruanonBadge: FC<{ rank: string; score: string | null }> = ({
             <p>
               <strong
                 style={{
-                  color: `var(--truanon-${rank.toLowerCase()}, currentColor)`,
+                  color: `var(--identity-rank-${rank.toLowerCase()}, currentColor)`,
                 }}
               >
                 {rank}
