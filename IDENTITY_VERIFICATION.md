@@ -21,21 +21,8 @@ pluggable provider rather than a single hardcoded integration:
   `app/javascript/mastodon/components/avatar.tsx`
 - Member switches: Edit Profile section and `Settings → Verification`, both
   reading/writing the same `user.settings`
-
-  ![Edit Profile page with an "Identity display settings" section, its Manage button, and a tip about anchoring verified identity.](docs/identity-verification-edit-profile.png)
-
-  ![The Identity display settings modal, with toggles for Use verified identity, Show personal details, Show contact info, Show social profiles, and Private mode.](docs/identity-verification-manage-modal.png)
-
-  ![Settings → Verification page, showing Mastodon's native manual "Website verification" (rel="me") side by side with a TruAnon "Automatic verification" popup mid-flow, asking the member to securely assign ownership.](docs/identity-verification-settings-flow.png)
-
-  This is the pitch in one screenshot: automatic verification sitting right
-  next to Mastodon's own manual `rel="me"` flow, not replacing it.
-
 - Admin config: `Server Settings → Identity verification` — a real
   enable/disable switch, inert until a provider is configured
-
-  ![Admin Server settings page's Identity verification tab, with an Enable checkbox and Service name / Private key provider credential fields.](docs/identity-verification-admin.png)
-
 - Migration: `db/migrate/20260719193000_add_truanon_badge_to_accounts.rb`
 
 ## Privacy model
@@ -50,3 +37,17 @@ doesn't erase the anchor — it returns display to `Unknown`, reversibly.
 Clone this branch, add `TRUANON_SERVICE_NAME` and `TRUANON_PRIVATE_KEY`
 (from Server Settings once running, or as env vars), and every piece above
 is live against a standard Mastodon dev setup. No public demo instance yet.
+
+## Screenshots
+
+![Edit Profile page with an "Identity display settings" section, its Manage button, and a tip about anchoring verified identity.](docs/identity-verification-edit-profile.png)
+Edit Profile — the entry point to the member's own identity display settings.
+
+![The Identity display settings modal, with toggles for Use verified identity, Show personal details, Show contact info, Show social profiles, and Private mode.](docs/identity-verification-manage-modal.png)
+The Manage modal — per-field visibility switches, all reversible.
+
+![Settings → Verification page, showing Mastodon's native manual "Website verification" (rel="me") side by side with a TruAnon "Automatic verification" popup mid-flow, asking the member to securely assign ownership.](docs/identity-verification-settings-flow.png)
+Settings → Verification — automatic verification sitting next to Mastodon's own manual `rel="me"` flow, not replacing it. This is the pitch in one screenshot.
+
+![Admin Server settings page's Identity verification tab, with an Enable checkbox and Service name / Private key provider credential fields.](docs/identity-verification-admin.png)
+Server Settings → Identity verification — admin-side enable switch and provider credentials.
