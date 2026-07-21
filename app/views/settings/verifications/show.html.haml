@@ -37,10 +37,12 @@
   %h2.heading-medium Automatic verification
 
   %p.lead
-    Using rel="me" alone, is limited to sites where you control the HTML. Extend the same protocol as a simple, portable identity that reflects identity confidence, stays current and travels with the owner across the fediverse.
+    The rel="me" protocol verifies websites and profiles you want to be known by. Identity makes this easier and extends to social or blog sites that don’t support HTML editing.
 
   - if @truanon[:configured] == false
     %p.lead A server administrator must add the TruAnon service name and key before this can be used.
+  - elsif @truanon[:disabled]
+    %p.lead Automatic verification is currently turned off on this server.
   - else
     - if @truanon[:error]
       - if @truanon[:error_code] == 'service_inactive'
@@ -52,14 +54,14 @@
       .fields-group
         .input-copy
           .input-copy__wrapper
-            %input{ type: 'text', maxlength: 999, spellcheck: false, readonly: true, value: 'Your identity has been securely anchored.' }
+            %input{ type: 'text', maxlength: 999, spellcheck: false, readonly: true, value: 'Your identity has been securely assigned.' }
           - if @truanon_public_profile_url.present?
             = link_to @truanon_public_profile_url.sub(%r{\Ahttps?://}i, ''), ta_href, class: 'button', target: '_blank', rel: 'noopener'
 
       = simple_form_for current_user, url: settings_verification_path, html: { method: :put, id: :edit_truanon } do |tf|
         = tf.simple_fields_for :settings, current_user.settings do |ff|
           .fields-group
-            = ff.input :wants_verified_identity, wrapper: :with_label, label: 'Use verified identity', hint: 'Off shows you as Unknown everywhere. Your anchor remains yours.'
+            = ff.input :wants_verified_identity, wrapper: :with_label, label: 'Use verified identity', hint: 'Off returns you to Unknown. Your anchor remains yours.'
 
           %h3.heading-small Privacy
 
@@ -77,10 +79,10 @@
       .fields-group
         .input-copy
           .input-copy__wrapper
-            %input{ type: 'text', maxlength: 999, spellcheck: false, readonly: true, value: 'Securely assign ownership one-time only' }
+            %input{ type: 'text', maxlength: 999, spellcheck: false, readonly: true, value: 'Securely assign ownership only once' }
           %button.button{ type: 'button', data: { truanon_verify: @truanon_verify_url } } Verify
       %p.lead
-        Once your this profile is securely anchored, your rank along with any details you choose to share, travel with you across the Fediverse — anything you keep private stays private.
+        Once this profile is securely anchored, your rank along with any details you choose to share, travel with you across the fediverse — you control what is visible, your badge makes you trusted.
 
 = simple_form_for @account, url: settings_verification_path, html: { class: 'form-section' } do |f|
   = render 'shared/error_messages', object: @account

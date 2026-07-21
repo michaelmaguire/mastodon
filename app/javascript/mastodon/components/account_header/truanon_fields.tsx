@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
-import type { FC, ReactNode } from 'react';
+import { useEffect, useState } from "react";
+import type { FC, ReactNode } from "react";
 
-import TruanonVerified from '@/images/icons/truanon_verified.svg?react';
-import { apiRequestGet } from '@/mastodon/api';
-import { useAccount } from '@/mastodon/hooks/useAccount';
+import TruanonVerified from "@/images/icons/truanon_verified.svg?react";
+import { apiRequestGet } from "@/mastodon/api";
+import { useAccount } from "@/mastodon/hooks/useAccount";
 
 // TruAnon verified identity. Rendered the way the original fork did it: the
 // member's native profile fields and the TruAnon verified rows share ONE
@@ -34,6 +34,7 @@ interface TruanonCardData {
   }[];
   profile_url?: string | null;
   rank?: string;
+  private_mode?: boolean;
 }
 
 interface Row {
@@ -47,7 +48,7 @@ const isValidURL = (str: string) => /^[^\s.]+(\.[^\s]+)+$/.test(str);
 
 const link = (display: string): ReactNode =>
   isValidURL(display) ? (
-    <a href={`https://${display}`} target='_blank' rel='noopener noreferrer'>
+    <a href={`https://${display}`} target="_blank" rel="noopener noreferrer">
       {display}
     </a>
   ) : (
@@ -89,7 +90,11 @@ export const TruanonFields: FC<{ accountId: string }> = ({ accountId }) => {
 
   // The member's native metadata fields (rendered first, verified per Mastodon).
   const nativeFields = account?.fields.toJS() as
-    | { name_emojified: string; value_emojified: string; verified_at: string | null }[]
+    | {
+        name_emojified: string;
+        value_emojified: string;
+        verified_at: string | null;
+      }[]
     | undefined;
 
   nativeFields?.forEach((field) => {
@@ -106,7 +111,7 @@ export const TruanonFields: FC<{ accountId: string }> = ({ accountId }) => {
     // Public profile link.
     if (data.profile_url) {
       rows.push({
-        name: 'Verified Identity',
+        name: "Verified Identity",
         value: link(data.profile_url),
         verified: true,
       });
@@ -114,23 +119,24 @@ export const TruanonFields: FC<{ accountId: string }> = ({ accountId }) => {
 
     // Personal, collapsed into a single comma-separated row.
     const personal = data.sections.find(
-      (section) => section.kind === 'personal',
+      (section) => section.kind === "personal",
     );
     if (personal && personal.items.length > 0) {
       const values = [...personal.items]
         .sort((a, b) => personalRank(a.type) - personalRank(b.type))
         .map((item) => item.display);
-      rows.push({ name: 'Personal', value: values.join(', '), verified: true });
+      rows.push({ name: "Personal", value: values.join(", "), verified: true });
     }
 
     // Social + contact, one row each, labelled by the property's own name.
+    // In private mode ("no links") the values show as plain text, not links.
     data.sections
-      .filter((section) => section.kind !== 'personal')
+      .filter((section) => section.kind !== "personal")
       .forEach((section) => {
         section.items.forEach((item) => {
           rows.push({
             name: item.name,
-            value: link(item.display),
+            value: data.private_mode ? item.display : link(item.display),
             verified: true,
           });
         });
@@ -146,13 +152,13 @@ export const TruanonFields: FC<{ accountId: string }> = ({ accountId }) => {
     : undefined;
 
   return (
-    <div className='account__header__fields'>
+    <div className="account__header__fields">
       {rows.map((row, index) => (
-        <dl key={index} className={row.verified ? 'verified' : undefined}>
-          <dt className='translate'>{row.name}</dt>
-          <dd className='translate'>
+        <dl key={index} className={row.verified ? "verified" : undefined}>
+          <dt className="translate">{row.name}</dt>
+          <dd className="translate">
             {row.verified && (
-              <TruanonVerified className={`truanon-mark ${rankClass ?? ''}`} />
+              <TruanonVerified className={`truanon-mark ${rankClass ?? ""}`} />
             )}
             <span>{row.value}</span>
           </dd>

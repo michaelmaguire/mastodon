@@ -51,6 +51,7 @@ class Form::AdminSettings
     opt_in_server_recommendation
     postpone_confirmation_emails
     theme_color
+    truanon_enabled
     truanon_service_name
     truanon_private_key
   ).freeze
@@ -78,6 +79,7 @@ class Form::AdminSettings
     opt_in_server_recommendation
     wrapstodon
     postpone_confirmation_emails
+    truanon_enabled
   ).freeze
 
   UPLOAD_KEYS = %i(

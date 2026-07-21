@@ -78,7 +78,7 @@ export const messages = defineMessages({
   truanonSubtitle: {
     id: "account_edit.truanon.subtitle",
     defaultMessage:
-      "Control how members view and share the things others already know you by.",
+      "Control how members see the links and profiles others to know you by.",
   },
   truanonTipTitle: {
     id: "account_edit.truanon.tip_title",
@@ -194,7 +194,6 @@ export const AccountEdit: FC = () => {
   const handleTruanonManage = useCallback(() => {
     window.location.assign("/settings/verification");
   }, []);
-
   const history = useHistory();
   const handleFeaturedTagsEdit = useCallback(() => {
     history.push("/profile/featured_tags");
@@ -277,54 +276,58 @@ export const AccountEdit: FC = () => {
           />
         </AccountEditSection>
 
-        <AccountEditSection
-          title={messages.truanonTitle}
-          description={messages.truanonSubtitle}
-          showDescription
-          buttons={
-            account.truanon ? (
-              <Button
-                className={classes.editButton}
-                onClick={handleTruanonSettings}
-              >
-                <FormattedMessage
-                  id="account_edit.truanon.button_label"
-                  defaultMessage="Manage"
-                />
-              </Button>
-            ) : (
-              <Button
-                className={classes.editButton}
-                onClick={handleTruanonManage}
-              >
-                <FormattedMessage
-                  id="account_edit.truanon.anchor_label"
-                  defaultMessage="Get verified"
-                />
-              </Button>
-            )
-          }
-        >
-          <Button
-            onClick={handleTruanonHelp}
-            className={classes.verifiedLinkHelpButton}
-            plain
+        {/* Only when TruAnon is active on this server (admin-enabled +
+            configured); the account carries `truanon` only then. */}
+        {account.truanon && (
+          <AccountEditSection
+            title={messages.truanonTitle}
+            description={messages.truanonSubtitle}
+            showDescription
+            buttons={
+              account.truanon.rank !== "Unknown" ? (
+                <Button
+                  className={classes.editButton}
+                  onClick={handleTruanonSettings}
+                >
+                  <FormattedMessage
+                    id="account_edit.truanon.button_label"
+                    defaultMessage="Manage"
+                  />
+                </Button>
+              ) : (
+                <Button
+                  className={classes.editButton}
+                  onClick={handleTruanonManage}
+                >
+                  <FormattedMessage
+                    id="account_edit.truanon.anchor_label"
+                    defaultMessage="Get verified"
+                  />
+                </Button>
+              )
+            }
           >
-            <FormattedMessage
-              id="account_edit.truanon.help"
-              defaultMessage="How do I secure this profile as my own?"
-            />
-          </Button>
-          <DismissibleCallout
-            id="profile_edit_truanon_tip"
-            title={intl.formatMessage(messages.truanonTipTitle)}
-          >
-            <FormattedMessage
-              id="account_edit.truanon.tip_content"
-              defaultMessage="Show you are trustworthy while staying as private or as public as you choose."
-            />
-          </DismissibleCallout>
-        </AccountEditSection>
+            <Button
+              onClick={handleTruanonHelp}
+              className={classes.verifiedLinkHelpButton}
+              plain
+            >
+              <FormattedMessage
+                id="account_edit.truanon.help"
+                defaultMessage="How do I secure this profile as my own?"
+              />
+            </Button>
+            <DismissibleCallout
+              id="profile_edit_truanon_tip"
+              title={intl.formatMessage(messages.truanonTipTitle)}
+            >
+              <FormattedMessage
+                id="account_edit.truanon.tip_content"
+                defaultMessage="Show you are trustworthy while staying as private or as public as you choose."
+              />
+            </DismissibleCallout>
+          </AccountEditSection>
+        )}
 
         <AccountEditSection
           title={messages.customFieldsTitle}

@@ -23,16 +23,43 @@ class TruAnonService
 
   attr_reader :verify_url, :public_profile_url
 
+  # Admin settings take precedence; the ENV vars remain a fallback so an
+  # operator can configure the service either way.
+  def self.service_name
+    Setting.truanon_service_name.presence || ENV.fetch('TRUANON_SERVICE_NAME', nil)
+  end
+
+  def self.private_key
+    Setting.truanon_private_key.presence || ENV.fetch('TRUANON_PRIVATE_KEY', nil)
+  end
+
+  def self.configured?
+    service_name.present? && private_key.present?
+  end
+
+  # The admin on/off switch. Independent of ENV — an administrator turns the
+  # whole integration on or off from Server Settings without touching the key.
+  def self.enabled?
+    Setting.truanon_enabled
+  end
+
+  # The real gate for anything TruAnon shows: switched on AND has credentials.
+  def self.active?
+    enabled? && configured?
+  end
+
   def initialize(account)
     @account      = account
-    # Admin settings take precedence; the ENV vars remain a fallback so an
-    # operator can configure the service either way.
-    @service_name = Setting.truanon_service_name.presence || ENV.fetch('TRUANON_SERVICE_NAME', nil)
-    @private_key  = Setting.truanon_private_key.presence || ENV.fetch('TRUANON_PRIVATE_KEY', nil)
+    @service_name = self.class.service_name
+    @private_key  = self.class.private_key
   end
 
   def configured?
     @service_name.present? && @private_key.present?
+  end
+
+  def active?
+    self.class.enabled? && configured?
   end
 
   # Live profile fetch (v2). Returns the parsed body hash on a clean 200, else
@@ -49,6 +76,7 @@ class TruAnonService
   # admin problem, not "try again later".
   def resolve_verification
     return { configured: false } unless configured?
+    return { configured: true, disabled: true } unless self.class.enabled?
 
     result = fetch("#{API_V2}/get_profile", id: @account.username, service: @service_name)
     body   = result[:body]
@@ -76,7 +104,7 @@ class TruAnonService
   # Display cache payload for a badge/checkmark. Switch-gated: a member with the
   # master switch off is never fetched and reads as Unknown.
   def badge_data
-    return unknown unless configured? && @account.user&.settings&.[](:wants_verified_identity)
+    return unknown unless active? && @account.user&.settings&.[](:wants_verified_identity)
 
     body = fetch_profile
     return unknown if body.nil? || !anchored?(body)
@@ -103,7 +131,7 @@ class TruAnonService
   # mode (which strips links and reduces identifiers). Returns display-safe
   # sections the frontend renders as boxes.
   def card_data
-    return { sections: [] } unless configured? && @account.user&.settings&.[](:wants_verified_identity)
+    return { sections: [] } unless active? && @account.user&.settings&.[](:wants_verified_identity)
 
     body = fetch_profile
     return { sections: [] } unless body.is_a?(Hash) && anchored?(body)
@@ -160,7 +188,7 @@ class TruAnonService
       { kind: kind, label: label, items: grouped[kind] }
     end
 
-    { sections: sections, profile_url: profile_url }
+    { sections: sections, profile_url: profile_url, private_mode: private_mode == true }
   end
 
   # Private mode: an email keeps only its domain, a phone only its last two digits.

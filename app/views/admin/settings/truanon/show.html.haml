@@ -8,9 +8,23 @@
 = simple_form_for @admin_settings, url: admin_settings_truanon_path do |f|
   = render 'shared/error_messages', object: @admin_settings
 
+  - configured = TruAnonService.configured?
+  - effective_key = Setting.truanon_private_key.presence || ENV['TRUANON_PRIVATE_KEY']
+
   %p.lead= t('admin.settings.truanon.preamble')
 
-  - effective_key = Setting.truanon_private_key.presence || ENV['TRUANON_PRIVATE_KEY']
+  %p.lead
+    = t('admin.settings.truanon.get_credentials_html', link: link_to('developer.truanon.com', 'https://developer.truanon.com', target: '_blank', rel: 'noopener'))
+
+  .fields-group
+    = f.input :truanon_enabled,
+              as: :boolean,
+              wrapper: :with_label,
+              label: t('admin.settings.truanon.enabled'),
+              hint: configured ? t('admin.settings.truanon.enabled_hint') : t('admin.settings.truanon.enabled_needs_config'),
+              disabled: !configured
+
+  %h3.heading-small= t('admin.settings.truanon.credentials')
 
   .fields-group
     = f.input :truanon_service_name,

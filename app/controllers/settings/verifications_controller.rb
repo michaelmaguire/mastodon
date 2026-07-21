@@ -24,7 +24,11 @@ class Settings::VerificationsController < Settings::BaseController
   private
 
   def update_truanon_settings
-    current_user.update(user_settings_params)
+    saved = current_user.update(user_settings_params)
+    # Recompute the cached badge synchronously so the reloaded page reflects
+    # Unknown/rank immediately (the anchor itself is untouched).
+    TruAnonService.new(@account).refresh_cache! if saved
+    saved
   end
 
   def update_account

@@ -604,6 +604,10 @@ $button-fallback-breakpoint: $button-breakpoint + 55px;
   --ta-color: #d64545;
 }
 
+.rankUnknown {
+  --ta-color: #8a8f98;
+}
+
 // Doubled class so these win over the Badge component's own variant
 // background/text rules — across CSS modules, equal single-class specificity
 // would otherwise resolve by stylesheet load order. The rank classes above set

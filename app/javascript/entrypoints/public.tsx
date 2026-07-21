@@ -333,7 +333,7 @@ on('click', '.input-copy input', ({ target }) => {
   target.setSelectionRange(0, target.value.length);
 });
 
-on('click', '.input-copy button', ({ target }) => {
+on('click', '.input-copy button:not([data-truanon-verify])', ({ target }) => {
   if (!(target instanceof HTMLButtonElement)) return;
 
   const input = target.parentNode?.querySelector<HTMLInputElement>(

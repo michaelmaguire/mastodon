@@ -54,7 +54,7 @@ export interface AccountShape extends Required<
   hidden: boolean;
   moved: string | null;
   url: string;
-  truanon?: { rank: string; score: string };
+  truanon?: { rank: string; score: string | null };
 }
 export type AccountShapeFull = Omit<
   AccountShape,

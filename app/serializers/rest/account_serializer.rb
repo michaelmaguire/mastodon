@@ -28,7 +28,7 @@ class REST::AccountSerializer < ActiveModel::Serializer
   # TruAnon badge cache: rank + score only (color derives from rank). Rides every
   # account so the badge and per-post checkmark render from it, no per-view call.
   # Never a link, never an anchor — those are fetched live into the profile boxes.
-  attribute :truanon, if: :truanon_verified?
+  attribute :truanon, if: :show_truanon?
 
   class AccountDecorator < SimpleDelegator
     def self.model_name
@@ -75,11 +75,17 @@ class REST::AccountSerializer < ActiveModel::Serializer
   end
 
   def truanon
-    { rank: object.truanon_rank, score: object.truanon_score }
+    if object.truanon_verified?
+      { rank: object.truanon_rank, score: object.truanon_score }
+    else
+      { rank: 'Unknown', score: nil }
+    end
   end
 
-  def truanon_verified?
-    object.truanon_verified?
+  # Local members carry a TruAnon state whenever the server is configured: a
+  # verified rank, or "Unknown" until they anchor (or after they turn it off).
+  def show_truanon?
+    object.local? && TruAnonService.active?
   end
 
   def url

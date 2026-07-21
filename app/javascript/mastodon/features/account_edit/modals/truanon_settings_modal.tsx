@@ -3,10 +3,13 @@ import { useCallback, useEffect, useState } from "react";
 
 import { FormattedMessage, useIntl } from "react-intl";
 
+import { fetchAccount } from "@/mastodon/actions/accounts";
 import { apiRequestGet, apiRequestPut } from "@/mastodon/api";
 import { Callout } from "@/mastodon/components/callout";
 import { ToggleField } from "@/mastodon/components/form_fields";
 import { LoadingIndicator } from "@/mastodon/components/loading_indicator";
+import { me } from "@/mastodon/initial_state";
+import { useAppDispatch } from "@/mastodon/store";
 
 import type { DialogModalProps } from "../../ui/components/dialog_modal";
 import { DialogModal } from "../../ui/components/dialog_modal";
@@ -27,6 +30,7 @@ interface TruanonSettings {
 // Profile display settings). Reads and writes through /api/v1/truanon_settings.
 export const TruanonSettingsModal: FC<DialogModalProps> = ({ onClose }) => {
   const intl = useIntl();
+  const dispatch = useAppDispatch();
   const [settings, setSettings] = useState<TruanonSettings | null>(null);
   const [pending, setPending] = useState(false);
 
@@ -58,6 +62,11 @@ export const TruanonSettingsModal: FC<DialogModalProps> = ({ onClose }) => {
       apiRequestPut<TruanonSettings>("v1/truanon_settings", { [name]: checked })
         .then((data) => {
           setSettings(data);
+          // The master switch changes the badge; re-fetch the account so it
+          // updates in place (Unknown ⇄ rank) without a page reload.
+          if (name === "wants_verified_identity" && me) {
+            dispatch(fetchAccount(me));
+          }
           return data;
         })
         .catch(() => {
@@ -67,7 +76,7 @@ export const TruanonSettingsModal: FC<DialogModalProps> = ({ onClose }) => {
           setPending(false);
         });
     },
-    [],
+    [dispatch],
   );
 
   if (!settings) {

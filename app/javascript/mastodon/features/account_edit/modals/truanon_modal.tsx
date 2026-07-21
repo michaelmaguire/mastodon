@@ -16,7 +16,7 @@ export const TruanonModal: FC<DialogModalProps> = ({ onClose }) => (
     title={
       <FormattedMessage
         id="account_edit.truanon_modal.title"
-        defaultMessage="How do I securely anchor my profile?"
+        defaultMessage="How do I securely anchor my identity?"
       />
     }
     noCancelButton
@@ -24,7 +24,7 @@ export const TruanonModal: FC<DialogModalProps> = ({ onClose }) => (
   >
     <FormattedMessage
       id="account_edit.truanon_modal.details"
-      defaultMessage="Anchoring confirms who you are one-time only, then reflects a rank across the Fediverse — amplifying your profile while you stay in control of what others see. Unlike a single verified link, it stays current on its own."
+      defaultMessage="Anchoring your identity makes blogs and social platforms easy to verify even when they don't support rel=me or HTML editing. Now you choose how you're known: reveal verified properties or simply the rank of confidence they represent."
       tagName="p"
     />
 
@@ -37,7 +37,7 @@ export const TruanonModal: FC<DialogModalProps> = ({ onClose }) => (
         />
         <FormattedMessage
           id="account_edit.truanon_modal.step1.details"
-          defaultMessage="On the Verification page, anchor your identity to the accounts and sites others already know you by. Your rank and badge then follow you across this server."
+          defaultMessage="On the Verification page, anchor your identity to your profile only once. Your trusted rank and badge build trust across this server."
           tagName="p"
         />
       </li>
@@ -49,7 +49,7 @@ export const TruanonModal: FC<DialogModalProps> = ({ onClose }) => (
         />
         <FormattedMessage
           id="account_edit.truanon_modal.step2.details"
-          defaultMessage="Grant or revoke visibility of your personal, contact, and social details — or stay fully private and show only your rank. A pseudonym and private information stay private."
+          defaultMessage="Grant or revoke visibility as you wish — stay fully private - you decide how others view and share your identity but the trust and confidence of your verified properties is always with you."
           tagName="p"
         />
       </li>
