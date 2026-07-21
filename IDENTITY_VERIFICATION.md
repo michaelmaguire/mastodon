@@ -1,21 +1,37 @@
-# Extend rel="me" protocol to protect pseudonymity and securely separate from PII
+# Identity verification — what's actually in this branch
 
-My software background is Digital Rights. I want to help secure our future
-world and see the greater good we hand off to our children. I focus on
-human safety, harm reduction, and data sovereignty.
+An extension to Mastodon's manual `rel="me"` link verification, built as a
+pluggable provider rather than a single hardcoded integration:
 
-People love the `rel="me"` protocol because it verifies websites and
-profiles you want to be known by without authority, review or dispute.
+- **`app/services/identity_verification_provider.rb`** — the abstract
+  contract (`configured?`, `active?`, `badge_data`, `card_data`,
+  `resolve_verification`, `refresh_cache!`). A second provider implements
+  this and gets registered in one place.
+- **`app/services/identity_verification.rb`** — the resolver every
+  controller, worker, and serializer calls through.
+- **`app/services/tru_anon_service.rb`** — the reference implementation,
+  using [TruAnon](https://developer.truanon.com)'s API. Free for Mastodon
+  instances.
 
-We want to make it easier to confirm what is yours and make it possible for
-social or blog sites that don't support HTML editing.
+## Where to look
 
-Mostly? We want to choose how we're known: reveal verified properties or
-just a badge with the rank of confidence they represent.
+- Badge + avatar ring: `app/javascript/mastodon/components/account_header/`,
+  `app/javascript/mastodon/components/avatar.tsx`
+- Member switches: Edit Profile section and `Settings → Verification`, both
+  reading/writing the same `user.settings`
+- Admin config: `Server Settings → Identity verification` — a real
+  enable/disable switch, inert until a provider is configured
+- Migration: `db/migrate/20260719193000_add_truanon_badge_to_accounts.rb`
 
-This approach protects a community from those seeking to identify, harm or
-even subpoena PII from the platform while honoring the tradition of open
-standards and digital rights.
+## Privacy model
 
-If you maintain an instance, or have opinions on how a verification badge
-should look, I'd love to hear.
+The server caches exactly two things: **rank** and **score**. Never a link,
+never a property. Everything a member has granted visibility to is fetched
+live per view and discarded after rendering. Turning verification off
+doesn't erase the anchor — it returns display to `Unknown`, reversibly.
+
+## Try it
+
+Clone this branch, add `TRUANON_SERVICE_NAME` and `TRUANON_PRIVATE_KEY`
+(from Server Settings once running, or as env vars), and every piece above
+is live against a standard Mastodon dev setup. No public demo instance yet.
