@@ -142,7 +142,7 @@ export const NotificationGroupWithStatus: React.FC<{
             <StatusContext.Provider
               value={{ id: statusId, contextType: 'notifications' }}
             >
-              <QuotedStatus id={statusId} clamp />
+              <QuotedStatus id={statusId} clamp disableOpen />
             </StatusContext.Provider>
           )}
 
