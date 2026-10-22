@@ -23,6 +23,19 @@ class IdentityVerificationProvider
     enabled? && configured?
   end
 
+  # Whether this provider can show badges for remote accounts too. A central
+  # service anchored by local members can't; portable signed proofs can.
+  def self.covers_remote_accounts?
+    false
+  end
+
+  # The badge payload for the REST API, from the account's cache columns:
+  # { rank:, score: } plus optional provider:, description:, issuer:.
+  # The badge hash for the REST API ({ rank:, score:, ... }), or nil for no badge.
+  def self.cached_badge(_account)
+    raise NotImplementedError
+  end
+
   def initialize(account)
     @account = account
   end

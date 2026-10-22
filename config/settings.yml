@@ -42,6 +42,9 @@ defaults: &defaults
   truanon_enabled: true
   truanon_service_name: ''
   truanon_private_key: ''
+  identity_verification_provider: ''
+  fediverse_verified_enabled: false
+  fediverse_verified_trusted_issuers: ''
 
 development:
   <<: *defaults

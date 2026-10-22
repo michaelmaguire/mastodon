@@ -72,7 +72,13 @@ export interface BaseApiAccountJSON {
   hide_collections: boolean;
   email_subscriptions?: boolean;
   invalid_handle?: boolean;
-  verified_identity?: { rank: string; score: string | null };
+  verified_identity?: {
+    rank: string;
+    score: string | null;
+    provider?: string;
+    description?: string;
+    issuer?: string;
+  };
 }
 
 // See app/serializers/rest/muted_account_serializer.rb

@@ -41,6 +41,14 @@ class TruAnonService < IdentityVerificationProvider
   end
 
   # The real gate for anything TruAnon shows: switched on AND has credentials.
+  def self.cached_badge(account)
+    if account.truanon_verified?
+      { rank: account.truanon_rank, score: account.truanon_score }
+    else
+      { rank: 'Unknown', score: nil }
+    end
+  end
+
   def self.active?
     enabled? && configured?
   end

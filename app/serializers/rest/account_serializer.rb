@@ -76,18 +76,12 @@ class REST::AccountSerializer < ActiveModel::Serializer
   end
 
   def verified_identity
-    if object.truanon_verified?
-      { rank: object.truanon_rank, score: object.truanon_score }
-    else
-      { rank: 'Unknown', score: nil }
-    end
+    IdentityVerification.cached_badge(object)
   end
 
-  # Local members carry an identity-verification state whenever the server is
-  # configured: a verified rank, or "Unknown" until they anchor (or after they
-  # turn it off).
   def show_verified_identity?
-    object.local? && IdentityVerification.active?
+    IdentityVerification.active? && (object.local? || IdentityVerification.covers_remote_accounts?) &&
+      verified_identity.present?
   end
 
   def url

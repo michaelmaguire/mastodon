@@ -76,6 +76,9 @@ export const AccountBadges: FC<{ accountId: string }> = ({ accountId }) => {
         key='verified-identity'
         rank={account.verified_identity.rank}
         score={account.verified_identity.score}
+        provider={account.verified_identity.provider}
+        description={account.verified_identity.description}
+        issuer={account.verified_identity.issuer}
       />,
     );
   }

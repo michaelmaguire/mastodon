@@ -13,6 +13,7 @@ class VerifyAccountLinksWorker
     end
 
     account.save! if account.changed?
+    FediverseVerifiedRefreshWorker.perform_async(account.id) if IdentityVerification.provider_name == 'fediverse_verified'
   rescue ActiveRecord::RecordNotFound
     true
   end

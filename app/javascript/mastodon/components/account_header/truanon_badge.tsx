@@ -30,11 +30,17 @@ const RANK_COPY: Record<string, string> = {
 // The inline verified-identity badge. Like Mastodon's "owner" badge it doesn't
 // link anywhere, but — modeled on the native handle "?" popover — clicking it
 // opens a short, self-explanatory note about what the rank means.
-export const TruanonBadge: FC<{ rank: string; score: string | null }> = ({
-  rank,
-  score,
-}) => {
+export const TruanonBadge: FC<{
+  rank: string;
+  score: string | null;
+  // Optional, from providers other than TruAnon (e.g. fediverse-verified),
+  // which have no score and explain their own rank.
+  provider?: string;
+  description?: string;
+  issuer?: string;
+}> = ({ rank, score, provider, description, issuer }) => {
   const isUnknown = rank === "Unknown";
+  const hasScore = !isUnknown && score !== null && score !== "";
   const accessibilityId = useId();
   const [open, setOpen] = useState(false);
   const [triggerElement, setTriggerElement] =
@@ -64,7 +70,7 @@ export const TruanonBadge: FC<{ rank: string; score: string | null }> = ({
       >
         <Badge
           icon={<TruanonVerified />}
-          label={isUnknown ? rank : `${rank} (${score} of 5)`}
+          label={hasScore ? `${rank} (${score} of 5)` : rank}
           className={classNames(classes.identityBadge, classes[`rank${rank}`])}
         />
       </button>
@@ -82,7 +88,7 @@ export const TruanonBadge: FC<{ rank: string; score: string | null }> = ({
             id={accessibilityId}
             className={classNames("dropdown-animation", classes.handleHelp)}
           >
-            <h3>Verified identity</h3>
+            <h3>{provider === "fediverse_verified" ? "fediverse-verified" : "Verified identity"}</h3>
             <p>
               <strong
                 style={{
@@ -91,12 +97,14 @@ export const TruanonBadge: FC<{ rank: string; score: string | null }> = ({
               >
                 {rank}
               </strong>
-              {!isUnknown && <> · {score} of 5</>}
+              {hasScore && <> · {score} of 5</>}
             </p>
             <p>
-              {RANK_COPY[rank] ??
+              {description ??
+                RANK_COPY[rank] ??
                 "A live measure of how much of this identity is anchored to a public presence others can check."}
             </p>
+            {issuer && <p>Verified by {issuer}</p>}
             <p>
               The badge is continuous and automatic, the account owner decides
               how others view and share identity details.

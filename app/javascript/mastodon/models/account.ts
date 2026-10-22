@@ -54,7 +54,13 @@ export interface AccountShape extends Required<
   hidden: boolean;
   moved: string | null;
   url: string;
-  verified_identity?: { rank: string; score: string | null };
+  verified_identity?: {
+    rank: string;
+    score: string | null;
+    provider?: string;
+    description?: string;
+    issuer?: string;
+  };
 }
 export type AccountShapeFull = Omit<
   AccountShape,
