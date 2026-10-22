@@ -22,6 +22,8 @@
 class FediverseVerifiedService < IdentityVerificationProvider
   CREDENTIAL_TYPE = 'FediverseVerifiedCredential'
   LEVELS = %w(person legal_name).freeze
+  # Identity checks that check no real identity: test wallets and the swiyu Beta-ID.
+  TEST_METHODS = %w(mock swiyu-beta-id).freeze
   LEVEL_LABELS = { 'person' => 'fediverse-verified person', 'legal_name' => 'fediverse-verified name' }.freeze
 
   def self.trusted_issuers
@@ -37,7 +39,7 @@ class FediverseVerifiedService < IdentityVerificationProvider
     Setting.fediverse_verified_enabled || ENV['FEDIVERSE_VERIFIED_ENABLED'] == 'true'
   end
 
-  # Proofs made with test wallets (identity_check_method "mock") never count,
+  # Test proofs ("test": true in the evidence, or a TEST_METHODS check) never count,
   # whatever the trust list says, unless explicitly allowed for development.
   def self.allow_test_proofs?
     ENV['FEDIVERSE_VERIFIED_ALLOW_TEST_PROOFS'] == 'true'
@@ -142,7 +144,9 @@ class FediverseVerifiedService < IdentityVerificationProvider
   end
 
   def test_proof?(credential)
-    Array(credential['evidence']).any? { |e| e.is_a?(Hash) && e['identity_check_method'] == 'mock' }
+    Array(credential['evidence']).any? do |e|
+      e.is_a?(Hash) && (e['test'] == true || TEST_METHODS.include?(e['identity_check_method']))
+    end
   end
 
   def acceptable?(credential)

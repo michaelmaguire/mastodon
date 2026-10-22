@@ -86,6 +86,22 @@ RSpec.describe FediverseVerifiedService do
       end
     end
 
+    context 'when it is a swiyu Beta-ID (details chosen by its holder)' do
+      before { credential['evidence'] = [{ 'type' => 'FediverseVerifiedEvidence', 'identity_check_method' => 'swiyu-beta-id' }] }
+
+      it 'is rejected' do
+        expect(service.refresh_cache![:verified]).to be false
+      end
+    end
+
+    context 'when the evidence is marked as a test proof' do
+      before { credential['evidence'] = [{ 'type' => 'FediverseVerifiedEvidence', 'identity_check_method' => 'new-method', 'test' => true }] }
+
+      it 'is rejected whatever the method' do
+        expect(service.refresh_cache![:verified]).to be false
+      end
+    end
+
     context 'with the person level' do
       let(:level) { 'person' }
 
