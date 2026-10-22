@@ -8,11 +8,11 @@ class AddFediverseVerifiedToAccounts < ActiveRecord::Migration[8.1]
 
   def change
     add_column :accounts, :fediverse_verified_level, :string
-    add_column :accounts, :fediverse_verified_age_over_18, :boolean, default: false, null: false
+    add_column :accounts, :fediverse_verified_age_over18, :boolean, default: false, null: false
     add_column :accounts, :fediverse_verified_name, :string
     add_column :accounts, :fediverse_verified_issuer, :string
     add_column :accounts, :fediverse_verified_checked_at, :datetime
-    add_index :accounts, [:fediverse_verified_level, :fediverse_verified_age_over_18],
+    add_index :accounts, [:fediverse_verified_level, :fediverse_verified_age_over18],
               where: 'fediverse_verified_level IS NOT NULL', algorithm: :concurrently,
               name: 'index_accounts_on_fediverse_verified'
   end

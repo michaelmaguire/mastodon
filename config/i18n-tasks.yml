@@ -57,6 +57,7 @@ ignore_unused:
   - 'activerecord.errors.models.doorkeeper/*'
   - 'errors.429'
   - 'admin.accounts.roles.*'
+  - 'fediverse_verified.descriptions.*'
   - 'admin.action_logs.actions.*'
   - 'admin.reports.summary.action_preambles.*'
   - 'admin.reports.summary.actions.*'

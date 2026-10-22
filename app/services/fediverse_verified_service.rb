@@ -23,10 +23,6 @@ class FediverseVerifiedService < IdentityVerificationProvider
   CREDENTIAL_TYPE = 'FediverseVerifiedCredential'
   LEVELS = %w(person legal_name).freeze
   LEVEL_LABELS = { 'person' => 'fediverse-verified person', 'legal_name' => 'fediverse-verified name' }.freeze
-  DESCRIPTIONS = {
-    'person' => 'A real person controls this account, as confirmed with a government digital ID. No name is shown.',
-    'legal_name' => 'This account is controlled by the named person, as confirmed with a government digital ID.',
-  }.freeze
 
   def self.trusted_issuers
     (Setting.fediverse_verified_trusted_issuers.presence || ENV.fetch('FEDIVERSE_VERIFIED_TRUSTED_ISSUERS', ''))
@@ -58,9 +54,9 @@ class FediverseVerifiedService < IdentityVerificationProvider
     return nil unless LEVELS.include?(account.fediverse_verified_level)
 
     rank = LEVEL_LABELS[account.fediverse_verified_level]
-    rank += ' · 18+' if account.fediverse_verified_age_over_18
+    rank += ' · 18+' if account.fediverse_verified_age_over18
     { rank: rank, score: nil, provider: 'fediverse_verified',
-      description: DESCRIPTIONS[account.fediverse_verified_level], issuer: account.fediverse_verified_issuer }
+      description: I18n.t("fediverse_verified.descriptions.#{account.fediverse_verified_level}"), issuer: account.fediverse_verified_issuer }
   end
 
   def configured?
@@ -100,7 +96,7 @@ class FediverseVerifiedService < IdentityVerificationProvider
     subject = credential&.dig('credentialSubject') || {}
     @account.update_columns(
       fediverse_verified_level: credential ? subject['verification_level'] : nil,
-      fediverse_verified_age_over_18: credential ? subject['age_over_18'] == true : false,
+      fediverse_verified_age_over18: credential ? subject['age_over_18'] == true : false,
       fediverse_verified_name: credential && subject['verification_level'] == 'legal_name' ? subject['name'] : nil,
       fediverse_verified_issuer: credential&.dig('issuer'),
       fediverse_verified_checked_at: Time.current
@@ -114,7 +110,7 @@ class FediverseVerifiedService < IdentityVerificationProvider
 
     items = []
     items << { type: 'name', name: 'Name', display: @account.fediverse_verified_name } if @account.fediverse_verified_name.present?
-    items << { type: 'age', name: 'Age', display: '18 or over' } if @account.fediverse_verified_age_over_18
+    items << { type: 'age', name: 'Age', display: '18 or over' } if @account.fediverse_verified_age_over18
     items << { type: 'issuer', name: 'Verified by', display: @account.fediverse_verified_issuer }
     { sections: [{ kind: 'fediverse_verified', label: self.class.cached_badge(@account)[:rank], items: items }] }
   end

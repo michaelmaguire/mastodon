@@ -1814,6 +1814,10 @@ en:
   featured_tags:
     errors:
       limit: You have already featured the maximum number of hashtags
+  fediverse_verified:
+    descriptions:
+      legal_name: This account is controlled by the named person, as confirmed with a government digital ID.
+      person: A real person controls this account, as confirmed with a government digital ID. No name is shown.
   filters:
     contexts:
       account: Profiles

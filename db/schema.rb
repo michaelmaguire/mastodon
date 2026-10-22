@@ -228,7 +228,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_20_120000) do
     t.string "url"
     t.string "username", default: "", null: false
     t.string "fediverse_verified_level"
-    t.boolean "fediverse_verified_age_over_18", default: false, null: false
+    t.boolean "fediverse_verified_age_over18", default: false, null: false
     t.string "fediverse_verified_name"
     t.string "fediverse_verified_issuer"
     t.datetime "fediverse_verified_checked_at"
@@ -238,7 +238,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_20_120000) do
     t.index ["moved_to_account_id"], name: "index_accounts_on_moved_to_account_id", where: "(moved_to_account_id IS NOT NULL)"
     t.index ["uri"], name: "index_accounts_on_uri", unique: true
     t.index ["url"], name: "index_accounts_on_url", opclass: :text_pattern_ops, where: "(url IS NOT NULL)"
-    t.index ["fediverse_verified_level", "fediverse_verified_age_over_18"], name: "index_accounts_on_fediverse_verified", where: "(fediverse_verified_level IS NOT NULL)"
+    t.index ["fediverse_verified_level", "fediverse_verified_age_over18"], name: "index_accounts_on_fediverse_verified", where: "(fediverse_verified_level IS NOT NULL)"
   end
 
   create_table "accounts_tags", primary_key: ["tag_id", "account_id"], force: :cascade do |t|

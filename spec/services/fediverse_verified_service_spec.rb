@@ -29,8 +29,10 @@ RSpec.describe FediverseVerifiedService do
 
   before do
     account.update!(fields: [{ 'name' => 'fediverse-verified name', 'value' => proof_url, 'verified_at' => Time.now.utc.iso8601 }])
-    stub_request(:get, "#{proof_url}.json").to_return(status: 200, body: credential.to_json,
-                                                       headers: { 'Content-Type' => 'application/vc+ld+json' })
+    # A block, so contexts that change `credential` in their own `before` are served the changed version.
+    stub_request(:get, "#{proof_url}.json").to_return do
+      { status: 200, body: credential.to_json, headers: { 'Content-Type' => 'application/vc+ld+json' } }
+    end
     allow(ActivityPub::ObjectIntegrityProof).to receive(:new).and_return(
       instance_double(ActivityPub::ObjectIntegrityProof, verify_actor!: signature_valid ? issuer_actor : nil)
     )
@@ -41,7 +43,7 @@ RSpec.describe FediverseVerifiedService do
   describe '#refresh_cache!' do
     it 'caches level, 18+, name and issuer from a trusted, valid credential' do
       expect(service.refresh_cache!).to include(verified: true, rank: 'fediverse-verified name · 18+')
-      expect(account.reload).to have_attributes(fediverse_verified_level: 'legal_name', fediverse_verified_age_over_18: true,
+      expect(account.reload).to have_attributes(fediverse_verified_level: 'legal_name', fediverse_verified_age_over18: true,
                                                 fediverse_verified_name: 'Mario Rossi', fediverse_verified_issuer: issuer)
     end
 
@@ -105,7 +107,7 @@ RSpec.describe FediverseVerifiedService do
 
   describe '.cached_badge' do
     it 'describes the cached level for the REST API' do
-      account.update_columns(fediverse_verified_level: 'person', fediverse_verified_age_over_18: false, fediverse_verified_issuer: issuer)
+      account.update_columns(fediverse_verified_level: 'person', fediverse_verified_age_over18: false, fediverse_verified_issuer: issuer)
       expect(described_class.cached_badge(account)).to include(rank: 'fediverse-verified person', score: nil,
                                                                provider: 'fediverse_verified', issuer: issuer)
     end
